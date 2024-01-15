@@ -1,5 +1,5 @@
 def get_api_key():
-    return "RGAPI-13e84fa5-b0fd-4aaf-8a0c-e3f7b69b597c"
+    return "RGAPI-15e85bc4-b9fd-4a62-b8f5-562a8b7cd47d"
 
 
 import cassiopeia as cass

@@ -11,7 +11,8 @@ def queue_dictionary(queue_id):
         900: "ARURF",
         1020: "One for All",
         1200: "Nexus Blitz", 
-        1700: "Game took place too long ago"
+        1700: "Game took place too long ago",
+        490: "Quickplay"
     }
     
     queue_name = queue_dict.get(queue_id, "Invalid")

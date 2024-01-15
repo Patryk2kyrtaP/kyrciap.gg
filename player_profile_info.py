@@ -6,9 +6,12 @@ from champion_dictionary import champ_dictionary
 from config import get_api_key, setup_cassiopeia
 import cassiopeia as cass
 
-def get_summoner_info(summoner_name):
+from region_dictionary import global_region_dictionary
+
+def get_summoner_info(summoner_name, global_region):
     api_key = get_api_key()
-    api_url = f"https://eun1.api.riotgames.com/lol/summoner/v4/summoners/by-name/{summoner_name}"
+    # global_region2 = global_region_dictionary(global_region)
+    api_url = f"https://{global_region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/{summoner_name}"
     api_url = api_url + '?api_key=' + api_key
     
     # setup_cassiopeia()
@@ -53,9 +56,9 @@ def get_summoner_info(summoner_name):
         return None
 
 # rank info
-def get_rank_info(encrypted_summoner_id):
+def get_rank_info(encrypted_summoner_id, global_region):
     api_key = get_api_key()
-    api_url = f"https://eun1.api.riotgames.com/lol/league/v4/entries/by-summoner/{encrypted_summoner_id}?api_key={api_key}"
+    api_url = f"https://{global_region}.api.riotgames.com/lol/league/v4/entries/by-summoner/{encrypted_summoner_id}?api_key={api_key}"
 
     try:
         resp = requests.get(api_url)
@@ -119,9 +122,9 @@ def extract_rank_info(info):
     return rank_info
 
 #champion maestry
-def get_maestry_points(puuid):
+def get_maestry_points(puuid, global_region):
     api_key = get_api_key()
-    api_url = f"https://eun1.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-puuid/{puuid}/top?count=10"
+    api_url = f"https://{global_region}.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-puuid/{puuid}/top?count=10"
     api_url = api_url + '&api_key=' + api_key
     
     try:
@@ -158,9 +161,10 @@ def get_maestry_points(puuid):
         return None    
 
 
-def get_game_name_by_puuid(puuid):
+def get_game_name_by_puuid(puuid, global_region):
     api_key  = get_api_key()
-    api_url = f'https://europe.api.riotgames.com/riot/account/v1/accounts/by-puuid/{puuid}'
+    global_region2 = global_region_dictionary(global_region)
+    api_url = f'https://{global_region2}.api.riotgames.com/riot/account/v1/accounts/by-puuid/{puuid}'
     api_url = api_url + '?api_key=' + api_key
     
     try:

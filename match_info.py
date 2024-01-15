@@ -1,21 +1,24 @@
 import datetime
 import requests
 from icecream import ic
+from collections import Counter
+from statistics import mean
 
 from config import get_api_key, setup_cassiopeia
 from item_dictionary import item_dictionary
 from player_profile_info import get_game_name_by_puuid
-from region_dictionary import region_dictionary
+from region_dictionary import global_region_dictionary, region_dictionary
 from summoner_spell_dictionary import summoner_spells_dictionary
 from cassiopeia import Rune
 from region_dictionary import region_dictionary
 from queue_dictionary import queue_dictionary
 
 
-def get_match_id(puuid):
+def get_match_id(puuid, global_region, count):
     # api_key = "RGAPI-cfa506a0-6ec1-4b84-9db0-d099dcf32566"
     api_key = get_api_key()
-    api_url_match_v5_by_puuid = f'https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?start=0&count=20'
+    global_region2 = global_region_dictionary(global_region)
+    api_url_match_v5_by_puuid = f'https://{global_region2}.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?start=0&count={count}'
     api_url = api_url_match_v5_by_puuid + '&api_key=' + api_key
 
     try:
@@ -31,10 +34,11 @@ def get_match_id(puuid):
     except Exception as e:
         print("Error occurred:", e)
 
-def get_general_match_info_by_id(match_id):
+def get_general_match_info_by_id(match_id, global_region):
     # api_key = "RGAPI-cfa506a0-6ec1-4b84-9db0-d099dcf32566"
     api_key = get_api_key()
-    api_url_match_info = f'https://europe.api.riotgames.com/lol/match/v5/matches/{match_id}'
+    global_region2 = global_region_dictionary(global_region)
+    api_url_match_info = f'https://{global_region2}.api.riotgames.com/lol/match/v5/matches/{match_id}'
     api_url = api_url_match_info + '?api_key=' + api_key
 
     try:
@@ -86,10 +90,11 @@ def get_general_match_info_by_id(match_id):
         print("Error occurred:", e)
         return None     
  
-def get_match_info_by_id(match_id):
+def get_match_info_by_id(match_id, global_region):
     # api_key = "RGAPI-cfa506a0-6ec1-4b84-9db0-d099dcf32566"
     api_key = get_api_key()
-    api_url_match_info = f'https://europe.api.riotgames.com/lol/match/v5/matches/{match_id}'
+    global_region2 = global_region_dictionary(global_region)
+    api_url_match_info = f'https://{global_region2}.api.riotgames.com/lol/match/v5/matches/{match_id}'
     api_url = api_url_match_info + '?api_key=' + api_key
 
     setup_cassiopeia()
@@ -179,62 +184,106 @@ def get_match_info_by_id(match_id):
         print("Error occurred:", e)  
 
 
-def last_20_games_stats(puuid):
-    api_key = get_api_key()  # Replace with your API key
-    api_url_matchlist = f'https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids'
-    api_url = api_url_matchlist + '?api_key=' + api_key
+def loop_through_matches(match_id, global_region):
+        api_key = get_api_key()
+        global_region2 = global_region_dictionary(global_region)
+        api_url_match_info = f'https://{global_region2}.api.riotgames.com/lol/match/v5/matches/{match_id}'
+        api_url = api_url_match_info + '?api_key=' + api_key
 
-    puuid = puuid
-    
-    our_summoner_name = get_game_name_by_puuid(puuid)
-    
-    try:
         resp = requests.get(api_url)
-        if resp.status_code == 200:
-            match_ids = resp.json()[:30]  
-            # ic(match_ids)
-            win_count = 0
-            for match_id in match_ids:
-                api_url_match_info = f'https://europe.api.riotgames.com/lol/match/v5/matches/{match_id}'
-                api_url = api_url_match_info + '?api_key=' + api_key
-                
-                try:
-                    resp = requests.get(api_url)
-                    print("Status Code:", resp.status_code)
-                    if resp.status_code == 200:
-                        match_info = resp.json()
-                        players_in_match = match_info['info']['participants'][:10]
-                        
-                        for player in players_in_match[:10]:
-                            summoner_name = player['summonerName']
-                            if summoner_name == our_summoner_name:
-                                win = player['win']
-                                # ic(win)
-                                if win == True:
-                                    win_count = win_count + 1
-                                    
-                  
-                except Exception as e:
-                    print("Error occurred:", e)  
-                
-            wins_in_20 = win_count
-            win_percent = round((wins_in_20 / 20) * 100, 2)
-                
-            info_list = [wins_in_20, win_percent]
-            return info_list 
- 
-        else:
-            print("Error in the API request")
-    except Exception as e:
-        print("Error occurred:", e)
+        data = resp.json()
+        return data
+        
+def player_to_loop(puuid, match_data):
 
+        wins = 0
+        fb_kill = 0
+        fb_assist = 0
+        fb_participation = 0
+        
+        if 'metadata' in match_data and 'participants' in match_data['metadata']:
+            part_index = match_data['metadata']['participants'].index(puuid)
+        
+        # part_index = match_data['metadata']['participants'].index(puuid)
+            win = match_data['info']['participants'][part_index]['win']
+            if win == True:
+                wins = 1
+            kills = match_data['info']['participants'][part_index]['kills']
+            deaths = match_data['info']['participants'][part_index]['deaths']
+            assists = match_data['info']['participants'][part_index]['assists']
+            queue_id = match_data['info']['queueId']
+            queue_name = queue_dictionary(queue_id)
+            champion_name = match_data['info']['participants'][part_index]['championName']
+            first_Blood_Kill = match_data['info']['participants'][part_index]['firstBloodKill']
+            if first_Blood_Kill == True:
+                fb_kill = 1
+            
+            first_blood_assist = match_data['info']['participants'][part_index]['firstBloodAssist']
+            if first_blood_assist == True:
+                fb_assist = 1
+            
+            if fb_kill == 1 or fb_assist == 1:
+                fb_participation = 1
+            
+            if deaths == 0:
+                kda = (kills + assists)
+            else:
+                kda = round((kills + assists) / deaths, 2)
+            
+            list = [wins, kda, champion_name, fb_participation]
+            
+            
+        else:
+            print('Metadata not found')
+        
+        return list
+
+def process_looped_info(looped_info):
+    total_wins = sum(item[0] for item in looped_info)
+    
+    # Obliczenie średniej KDA
+    average_kda = mean([item[1] for item in looped_info])
+    average_kda = round(average_kda, 2)
+    # Znalezienie najczęściej występującego bohatera
+    champions = [item[2] for item in looped_info]
+    most_frequent_champion = Counter(champions).most_common(3)#[0][0]
+
+    # Sumowanie pierwszych zabójstw
+    fb_participations = (sum(item[3] for item in looped_info))
+
+    return total_wins, average_kda, most_frequent_champion, fb_participations
+    
 # a = last_20_games_stats('PGiSiriQ2XpzwitWlp9EuOXk2KVNnO9C8wl5zczBKEkCJSBQic0vQ8vRIYCHf2vmLZtOj-u4COXnww')
 # ic(a)
 
 
 # a = get_general_match_info_by_id('EUN1_3528127260')
-# ic(a)
-
+# # ic(a)
+# matches = [
+#     'EUN1_3528211755',
+#     'EUN1_3528182528',
+#     'EUN1_3528146098',
+#     'EUN1_3528095469',
+#     'EUN1_3526786395',
+#     'EUN1_3526747280',
+#     'EUN1_3526701835',
+#     'EUN1_3526677399',
+#     'EUN1_3526495714',
+#     'EUN1_3526451919',
+#     'EUN1_3526421680',
+#     'EUN1_3513543232',
+#     'EUN1_3513521847',
+#     'EUN1_3513513284',
+#     'EUN1_3513478355',
+#     'EUN1_3513423571',
+#     'EUN1_3512353454',
+#     'EUN1_3512328052',
+#     'EUN1_3511855420',
+#     'EUN1_3512364838'
+#     ]
+# for match_id in matches:
+#     match_data = loop_through_matches(match_id, 'EUN1')
+#     ic(player_to_loop('PGiSiriQ2XpzwitWlp9EuOXk2KVNnO9C8wl5zczBKEkCJSBQic0vQ8vRIYCHf2vmLZtOj-u4COXnww', match_data))
 
 
 
