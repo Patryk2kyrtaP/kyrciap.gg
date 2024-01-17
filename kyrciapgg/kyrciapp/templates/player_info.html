@@ -1,10 +1,47 @@
-<!DOCTYPE html>
+<!DOCTYPE html>                         
 <html>
 <head>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
     <title>Informacje o Graczu</title>
 </head>
+
+<style>
+    .small-profile-icon {
+        width: 25%;  /* Zmniejszenie szerokości obrazu do 50% szerokości rodzica */
+        height: auto; /* Zachowanie proporcji obrazu */
+    }
+</style>
+
+<style>
+    .custom-card {
+        background: rgb(40, 38, 43);
+        border-radius: 10px; /* Zaokrąglenie rogów ramki */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Cień ramki dla lepszego efektu */
+        color:rgb(255, 255, 255);
+    }
+</style>
+
+<style>
+    .separator-border {
+        border-bottom: 20px solid rgb(33, 36, 40); /* Cienka linia, kolor biały z niską przeźroczystością */
+        padding-top: 10px;
+        padding-bottom: 10px;
+
+    }
+</style>
+
+<style>
+    .left-padding {
+        /* padding-left: 200px; */
+        font: bold;
+        font-size:x-large;
+    }
+</style>
+
+
+
 <body class="bg-dark text-white d-flex justify-content-center align-items-top" style="min-height: 100vh;">
     <div class="container d-flex align-items-top justify-content-between">
         <form method="post" class="w-100">
@@ -26,12 +63,91 @@
                 </button>   
             </div>
             <body>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="card" style="background-color: rgb(40, 38, 43);">
+                                <div class="card-body">
+                                    <div class="position-relative me-3">
+                                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/{{ icon }}.jpg" alt="Profile Icon" class="img-fluid small-profile-icon rounded">>  
+                                            <span class="position-absolute bottom-0 start-0 mb-1 ms-1" style="color: white; background: rgba(0, 0, 0, 100); padding: 2px;">{{ lvl }}</span>
+                                        
+                                        <div class="position-absolute top-0 start-50 translate-middle-x left-padding"  style="color: white; background: rgba(0, 0, 0, 0);">
+                                            <span>{{ summoner_name }}, #{{ global_region }}</span>
+                                            
+                                        </div>
+                                        
+                                        <form method="post" class="">
+                                            
+                                            {% csrf_token %}
+                                            <input type="hidden" name="summoner_name" value="{{ request.session.summoner_name }}">
+                                            <input type="hidden" name="region" value="{{ request.session.global_region }}">
+                                            <button type="submit" class="btn btn-primary ms-3">Update</button>
+                                            
+                                        </form>
+                                        
+                                    </div>
 
-                    <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/{{ icon }}.jpg" alt="Profile Icon">
 
+                                </div>
+                            </div>
+                        </div>        
+
+                        <div class="col-6">
+                            <div class="card custom-card ">
+                                <div class="card-body">
+                                    <h5 class="card-title text-center">Highest Maestries</h5>
+                                    <ul class="row list-unstyled separator-border">
+                                        {% for maestry in player_maestry_points %}
+                                            {% if forloop.counter <= 5 %}
+                                                <li class="col">
+
+                                                    <div class="position-relative mb-1 me-1">
+                                                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{ maestry.champion_name }}.png"  alt="Champion Icon" class="img-fluid">
+                                                        <span class="position-absolute bottom-0 start-0 mb-1 ms-1" style="color: white; background: rgba(0, 0, 0, 100); padding: 2px;">{{ forloop.counter }}</span>
+                                                        {% if maestry.chest_granted %}
+                                                            <i class="fas fa-check position-absolute bottom-0 end-0 mb-1 me-1" style="color: rgb(255, 255, 255);"></i>
+                                                        {% else %}
+                                                            <i class="fas fa-hourglass position-absolute bottom-0 end-0 mb-1 me-1" style="color: rgb(255, 255, 255);"></i>
+                                                        {% endif %}
+                                                    </div>
+                                                    <img src="https://raw.communitydragon.org/7.23/plugins/rcp-fe-lol-champion-mastery-notifications/global/default/assets/cm_rank_up/7.png" alt="Points Icon" style="width: 1em; height: 1em;">
+                                                    {{ maestry.champion_points }}
+
+                                                    <i class="bi bi-calendar3" style="font-size: 1em;"></i> {{ maestry.last_play_date }}
+                                                </li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                    <ul class="row list-unstyled">
+                                        {% for maestry in player_maestry_points %}
+                                            {% if forloop.counter > 5 %}
+                                                <li class="col">
+                                                    <div class="position-relative">
+                                                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{ maestry.champion_name }}.png" alt="Champion Icon" class="img-fluid">
+                                                        <span class="position-absolute bottom-0 start-0 mb-1 ms-1" style="color: white; background: rgba(0, 0, 0, 100); padding: 2px;">{{ forloop.counter }}</span>
+                                                        {% if maestry.chest_granted %}
+                                                            <i class="fas fa-check position-absolute bottom-0 end-0 mb-1 me-1" style="color: rgb(255, 255, 255);"></i>
+                                                        {% else %}
+                                                            <i class="fas fa-hourglass position-absolute bottom-0 end-0 mb-1 me-1" style="color: rgb(255, 255, 255);"></i>
+                                                        {% endif %}
+                                                    </div>
+                                                    <img src="https://raw.communitydragon.org/7.23/plugins/rcp-fe-lol-champion-mastery-notifications/global/default/assets/cm_rank_up/7.png" alt="Points Icon" style="width: 1em; height: 1em;">
+                                                    {{ maestry.champion_points }}
+                                                    
+                                                    <i class="bi bi-calendar3" style="font-size: 1em;"></i> {{ maestry.last_play_date }}
+                                                </li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </body>
+
         </form>
-        <!-- Treść strony player_info -->
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

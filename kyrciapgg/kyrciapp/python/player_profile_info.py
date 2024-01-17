@@ -136,7 +136,7 @@ def get_maestry_points(puuid, global_region):
             for champion in maestry_info:
                 chestGranted = champion['chestGranted']
                 champion_id = champion['championId']
-                champion_name = champ_dictionary(champion_id)  # Przekazanie identyfikatora mistrza jako liczby całkowitej
+                champion_name = champion_id  # Przekazanie identyfikatora mistrza jako liczby całkowitej
                 last_play_time = champion['lastPlayTime']
                 last_play_date = datetime.fromtimestamp(last_play_time / 1000.0).strftime('%d/%m/%Y')
                 champion_level = champion['championLevel']

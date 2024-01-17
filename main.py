@@ -4,16 +4,13 @@ from icecream import ic
 from collections import Counter
 import numpy as np
 
-from config import get_api_key
+from kyrciapgg.kyrciapp.python.config import get_api_key
 from item_dictionary import item_dictionary
 from player_profile_info import get_maestry_points, get_rank_info, get_summoner_info
 from champion_dictionary import champ_dictionary
 from match_info import get_match_id, get_match_info_by_id, loop_through_matches, player_to_loop, process_looped_info
 from match_info import get_general_match_info_by_id #, get_match_info_by_id
 from region_dictionary import choose_region, region_dictionary, region_lists
-
-
-
 
 
 #  wywołanie get_summoner_info -
