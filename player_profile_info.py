@@ -3,7 +3,7 @@ import datetime
 from datetime import datetime
 from icecream import ic
 from champion_dictionary import champ_dictionary
-from config import get_api_key, setup_cassiopeia
+from kyrciapgg.kyrciapp.python.config import get_api_key, setup_cassiopeia
 import cassiopeia as cass
 
 from region_dictionary import global_region_dictionary

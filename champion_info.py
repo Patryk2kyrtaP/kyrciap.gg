@@ -1,6 +1,6 @@
 
 import requests
-from config import get_api_key
+from kyrciapgg.kyrciapp.python.config import get_api_key
 from player_profile_info import get_summoner_info
 
 def get_champion_stats(champion_name, server):

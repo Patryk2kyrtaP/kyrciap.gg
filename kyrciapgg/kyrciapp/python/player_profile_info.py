@@ -31,11 +31,7 @@ def get_summoner_info(summoner_name, global_region):
         #     region = summoner.region
         #     ic(region)
             summoner_Level = player_info['summonerLevel']
-            
-            
-            
-            
-            
+
             player_info_list = [account_Id, 
                                 profile_Icon_Id,    
                                 revision_Date,      
@@ -82,11 +78,10 @@ def get_rank_info(encrypted_summoner_id, global_region):
                 
             else:
                 print('No ranked games played.')
-
-
+                return None, None  # Zwróć krotkę dwóch wartości None
         else:
             print("Error in the API request")
-            return None
+            return None, None
     except Exception as e:
         print("Error occurred:", e)
         ic(e)
@@ -108,15 +103,15 @@ def extract_rank_info(info):
     rank_info = {
         "Tier": tier,
         "Rank": rank,
-        "League Points": leaguePoints,
+        "League_Points": leaguePoints,
         "Wins": wins,
         "Losses": losses,
-        "Games Played": games_played,
-        "Win Percentage": f'{win_percentage}%',
+        "Games_Played": games_played,
+        "Win_Percentage": f'{win_percentage}%',
         "Veteran": veteran,
         "Inactive": inactive,
-        "Fresh Blood": freshBlood,
-        "Hot Streak": hotStreak
+        "Fresh_Blood": freshBlood,
+        "Hot_Streak": hotStreak
     }
 
     return rank_info

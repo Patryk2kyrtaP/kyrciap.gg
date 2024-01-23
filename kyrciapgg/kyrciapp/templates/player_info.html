@@ -15,6 +15,13 @@
 </style>
 
 <style>
+    .small-tier-icon {
+        width: 65%;  /* Zmniejszenie szerokości obrazu do 50% szerokości rodzica */
+        height: auto; /* Zachowanie proporcji obrazu */
+    }
+</style>
+
+<style>
     .custom-card {
         background: rgb(40, 38, 43);
         border-radius: 10px; /* Zaokrąglenie rogów ramki */
@@ -34,122 +41,213 @@
 
 <style>
     .left-padding {
-        /* padding-left: 200px; */
+
         font: bold;
-        font-size:x-large;
+        font-size: 20px;
     }
 </style>
 
-
-
 <body class="bg-dark text-white d-flex justify-content-center align-items-top" style="min-height: 100vh;">
+<div class="container">
     <div class="container d-flex align-items-top justify-content-between">
         <form method="post" class="w-100">
-            {% csrf_token %}
+        {% csrf_token %}
             <div class="mb-3 d-flex justify-content-between align-items-left">
-                    <a href="{% url 'index' %}" class="btn btn-secondary mb-2 me-3 px-3 py-2 ">
-                        <i class="fas fa-home"></i>
-                    </a>
-                
+                <a href="{% url 'index' %}" class="btn btn-secondary mb-2 me-3 px-3 py-2 ">
+                    <i class="fas fa-home"></i>
+                </a>
+            
                 <input type="text" class="form-control mb-2 flex-grow-2 me-2" id="summoner_name" name="summoner_name" placeholder="Enter summoner name">
                 <select id="region" name="region" class="form-selec mb-2 me-2 rounded">
-                    {% for code, name in regions %}
-                    <option value="{{ code }}" {% if code == global_region %}selected{% endif %}>{{ name }}</option>
-                    {% endfor %}
+                {% for code, name in regions %}
+                <option value="{{ code }}" {% if code == global_region %}selected{% endif %}>{{ name }}</option>
+                {% endfor %}
                 </select>
-                
+            
                 <button type="submit" class="btn btn-primary mb-2">
-                    <i class="fas fa-search"></i>
+                <i class="fas fa-search"></i>
                 </button>   
             </div>
-            <body>
-                <div class="container">
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="card" style="background-color: rgb(40, 38, 43);">
-                                <div class="card-body">
-                                    <div class="position-relative me-3">
-                                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/{{ icon }}.jpg" alt="Profile Icon" class="img-fluid small-profile-icon rounded">>  
-                                            <span class="position-absolute bottom-0 start-0 mb-1 ms-1" style="color: white; background: rgba(0, 0, 0, 100); padding: 2px;">{{ lvl }}</span>
-                                        
-                                        <div class="position-absolute top-0 start-50 translate-middle-x left-padding"  style="color: white; background: rgba(0, 0, 0, 0);">
-                                            <span>{{ summoner_name }}, #{{ global_region }}</span>
-                                            
-                                        </div>
-                                        
-                                        <form method="post" class="">
-                                            
-                                            {% csrf_token %}
-                                            <input type="hidden" name="summoner_name" value="{{ request.session.summoner_name }}">
-                                            <input type="hidden" name="region" value="{{ request.session.global_region }}">
-                                            <button type="submit" class="btn btn-primary ms-3">Update</button>
-                                            
-                                        </form>
-                                        
-                                    </div>
-
-
-                                </div>
-                            </div>
-                        </div>        
-
-                        <div class="col-6">
-                            <div class="card custom-card ">
-                                <div class="card-body">
-                                    <h5 class="card-title text-center">Highest Maestries</h5>
-                                    <ul class="row list-unstyled separator-border">
-                                        {% for maestry in player_maestry_points %}
-                                            {% if forloop.counter <= 5 %}
-                                                <li class="col">
-
-                                                    <div class="position-relative mb-1 me-1">
-                                                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{ maestry.champion_name }}.png"  alt="Champion Icon" class="img-fluid">
-                                                        <span class="position-absolute bottom-0 start-0 mb-1 ms-1" style="color: white; background: rgba(0, 0, 0, 100); padding: 2px;">{{ forloop.counter }}</span>
-                                                        {% if maestry.chest_granted %}
-                                                            <i class="fas fa-check position-absolute bottom-0 end-0 mb-1 me-1" style="color: rgb(255, 255, 255);"></i>
-                                                        {% else %}
-                                                            <i class="fas fa-hourglass position-absolute bottom-0 end-0 mb-1 me-1" style="color: rgb(255, 255, 255);"></i>
-                                                        {% endif %}
-                                                    </div>
-                                                    <img src="https://raw.communitydragon.org/7.23/plugins/rcp-fe-lol-champion-mastery-notifications/global/default/assets/cm_rank_up/7.png" alt="Points Icon" style="width: 1em; height: 1em;">
-                                                    {{ maestry.champion_points }}
-
-                                                    <i class="bi bi-calendar3" style="font-size: 1em;"></i> {{ maestry.last_play_date }}
-                                                </li>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </ul>
-                                    <ul class="row list-unstyled">
-                                        {% for maestry in player_maestry_points %}
-                                            {% if forloop.counter > 5 %}
-                                                <li class="col">
-                                                    <div class="position-relative">
-                                                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{ maestry.champion_name }}.png" alt="Champion Icon" class="img-fluid">
-                                                        <span class="position-absolute bottom-0 start-0 mb-1 ms-1" style="color: white; background: rgba(0, 0, 0, 100); padding: 2px;">{{ forloop.counter }}</span>
-                                                        {% if maestry.chest_granted %}
-                                                            <i class="fas fa-check position-absolute bottom-0 end-0 mb-1 me-1" style="color: rgb(255, 255, 255);"></i>
-                                                        {% else %}
-                                                            <i class="fas fa-hourglass position-absolute bottom-0 end-0 mb-1 me-1" style="color: rgb(255, 255, 255);"></i>
-                                                        {% endif %}
-                                                    </div>
-                                                    <img src="https://raw.communitydragon.org/7.23/plugins/rcp-fe-lol-champion-mastery-notifications/global/default/assets/cm_rank_up/7.png" alt="Points Icon" style="width: 1em; height: 1em;">
-                                                    {{ maestry.champion_points }}
-                                                    
-                                                    <i class="bi bi-calendar3" style="font-size: 1em;"></i> {{ maestry.last_play_date }}
-                                                </li>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </body>
-
         </form>
     </div>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    
+    <div class="row">
+        <div class="col-sm-4">
+        <!-- Cell z player info -->
+            <div class="card" style="background-color: rgb(40, 38, 43);">
+                <div class="card-body">
+                    <div class="position-relative text-align: center;">
+                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/{{ icon }}.jpg" alt="Profile Icon" class="img-fluid small-profile-icon rounded">
+
+
+                        <div class="position-absolute top-0 start-50 translate-middle-x left-padding ms-2 "  style="color: white; background: rgba(0, 0, 0, 0);">
+                            <span>{{ summoner_name }}, #{{ global_region }}</span>
+                            <span>Level: {{ lvl }} </span>
+                        </div>
+                        
+                        <form method="post" class="mt-3">
+                            {% csrf_token %}
+                            <div class="text-center mt-2">
+                                <button type="submit" class="btn btn-primary">Update</button>
+                            </div>
+                            <input type="hidden" name="summoner_name" value="{{ request.session.summoner_name }}">
+                            <input type="hidden" name="region" value="{{ request.session.global_region }}">
+                        </form>                           
+                    </div>
+                </div>
+            </div>
+        </div>
+      <div class="col-sm-8">
+        <!-- Cell z MAESTRIĄ -->
+        <div class="card custom-card ">
+            <div class="card-body">
+                <h5 class="card-title text-center">Highest Maestries</h5>
+                <ul class="row list-unstyled separator-border">
+                    {% for maestry in player_maestry_points %}
+                        {% if forloop.counter <= 5 %}
+                            <li class="col">
+
+                                <div class="position-relative mb-1 me-1">
+                                    <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{ maestry.champion_name }}.png"  alt="Champion Icon" class="img-fluid">
+                                    <span class="position-absolute bottom-0 start-0 mb-1 ms-1" style="color: white; background: rgba(0, 0, 0, 100); padding: 2px;">{{ forloop.counter }}</span>
+                                    {% if maestry.chest_granted %}
+                                        <i class="fas fa-check position-absolute bottom-0 end-0 mb-1 me-1" style="color: rgb(255, 255, 255);"></i>
+                                    {% else %}
+                                        <i class="fas fa-hourglass position-absolute bottom-0 end-0 mb-1 me-1" style="color: rgb(255, 255, 255);"></i>
+                                    {% endif %}
+                                </div>
+                                <img src="https://raw.communitydragon.org/7.23/plugins/rcp-fe-lol-champion-mastery-notifications/global/default/assets/cm_rank_up/7.png" alt="Points Icon" style="width: 1em; height: 1em;">
+                                {{ maestry.champion_points }}
+
+                                <i class="bi bi-calendar3" style="font-size: 1em;"></i> {{ maestry.last_play_date }}
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+                <ul class="row list-unstyled">
+                    {% for maestry in player_maestry_points %}
+                        {% if forloop.counter > 5 %}
+                            <li class="col">
+                                <div class="position-relative">
+                                    <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{ maestry.champion_name }}.png" alt="Champion Icon" class="img-fluid">
+                                    <span class="position-absolute bottom-0 start-0 mb-1 ms-1" style="color: white; background: rgba(0, 0, 0, 100); padding: 2px;">{{ forloop.counter }}</span>
+                                    {% if maestry.chest_granted %}
+                                        <i class="fas fa-check position-absolute bottom-0 end-0 mb-1 me-1" style="color: rgb(255, 255, 255);"></i>
+                                    {% else %}
+                                        <i class="fas fa-hourglass position-absolute bottom-0 end-0 mb-1 me-1" style="color: rgb(255, 255, 255);"></i>
+                                    {% endif %}
+                                </div>
+                                <img src="https://raw.communitydragon.org/7.23/plugins/rcp-fe-lol-champion-mastery-notifications/global/default/assets/cm_rank_up/7.png" alt="Points Icon" style="width: 1em; height: 1em;">
+                                {{ maestry.champion_points }}
+                                
+                                <i class="bi bi-calendar3" style="font-size: 1em;"></i> {{ maestry.last_play_date }}
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="row pt-3">
+        <div class="col">
+            <div class="card" style="color: white; background-color: rgb(40, 38, 43);">
+                <div class="card-body">
+                    <h2>Ranked Solo/Duo</h2>
+                    {% if solo_rank_info %}
+                    <div class="row">
+                        <!-- Lewa część dla obrazka -->
+                        <div class="col-md-3 d-flex align-items-center justify-content-center">
+                            <img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/{{ solo_rank_info.Tier|lower }}.png" alt="Tier Icon" class="img-fluid small-tier-icon">
+                        </div>
+        
+                        <!-- Środkowa część dla informacji o Tier i Rank -->
+                        <div class="col-md-3 d-flex flex-column justify-content-center">
+                            <div>{{ solo_rank_info.Tier }} {{ solo_rank_info.Rank }}</div>
+                            <div>{{ solo_rank_info.League_Points }}LP</div>
+                        </div>
+        
+                        <!-- Prawa kolumna dla pozostałych informacji -->
+                        <div class="col-md-6 d-flex flex-column align-items-end">
+                            <div>{{ solo_rank_info.Wins }}W</div>
+                            <div>{{ solo_rank_info.Losses }}L</div>
+                            <div>Win ratio: {{ solo_rank_info.Win_Percentage }}</div>
+                            <div>Total games: {{ solo_rank_info.Games_Played }}</div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div>Unranked</div>
+                    {% endif %}
+                    <hr> <!-- Linia rozdzielająca różne rangi -->
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card" style="color: white; background-color: rgb(40, 38, 43);">
+                <div class="card-body">
+                    <h2>Ranked Flex 5v5</h2>
+                    {% if flex_rank_info %}
+                    <div class="row">
+                        <!-- Lewa część dla obrazka -->
+                        <div class="col-md-3 d-flex align-items-center justify-content-center">
+                            <img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/{{ flex_rank_info.Tier|lower }}.png" alt="Tier Icon" class="img-fluid small-tier-icon">
+                        </div>
+        
+                        <!-- Środkowa część dla informacji o Tier i Rank -->
+                        <div class="col-md-3 d-flex flex-column justify-content-center">
+                            <div>{{ flex_rank_info.Tier }} {{ flex_rank_info.Rank }}</div>
+
+                            <div>{{ flex_rank_info.League_Points }}LP</div>
+                        </div>
+        
+                        <!-- Prawa kolumna dla pozostałych informacji -->
+                        <div class="col-md-6 d-flex flex-column align-items-end">
+                            <div>{{ flex_rank_info.Wins }}W</div>
+                            <div>{{ flex_rank_info.Losses }}L</div>
+                            <div>Win Ratio: {{ flex_rank_info.Win_Percentage }}</div>
+                            <div>Total games: {{ flex_rank_info.Games_Played }}</div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div>Unranked</div>
+                    {% endif %}
+                    <hr>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- Match history! -->
+<table>
+    <thead>
+        <tr>
+            <th>Match history</th>
+
+            <!-- Możesz dodać więcej nagłówków tabeli w zależności od dostępnych danych -->
+        </tr>
+    </thead>
+    <tbody>
+        {% for match_id in match_id %}
+            <tr>
+                <td>{{ match_id }}</td>
+                <td>
+                    <!-- Tutaj możesz dodać bardziej szczegółowe informacje o meczu, jeśli są dostępne -->
+                    <!-- Przykład: {% for detail in match_details %} -->
+                    <!-- Szczegóły meczu -->
+                    <!-- {% endfor %} -->
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+
+
+</div>
+
+
 </body>
 </html>

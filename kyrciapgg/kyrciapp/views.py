@@ -2,8 +2,9 @@ from django.shortcuts import render, redirect
 from django.http import Http404, HttpResponse
 from flask import request
 
-from kyrciapp.python.player_profile_info import get_maestry_points, get_summoner_info
+from kyrciapp.python.player_profile_info import get_maestry_points, get_rank_info, get_summoner_info
 from kyrciapp.python.region_dictionary import choose_region
+from kyrciapp.python.match_info import get_match_id
 from .forms import SummonerForm 
 from django.shortcuts import render
 from .forms import SummonerForm 
@@ -31,74 +32,60 @@ def index(request):
     return render(request, 'index.html', {'form': form, 'regions': regions})
 
 def player_info(request):
-    
     if request.method == 'POST':
         form = SummonerForm(request.POST)
         if form.is_valid():
             request.session['summoner_name'] = form.cleaned_data['summoner_name']
             request.session['global_region'] = form.cleaned_data['region']
-            global_region = request.session['global_region']
-            # ic(request.session['summoner_name'], request.session['global_region'])
-            summoner_info = get_summoner_info(request.session['summoner_name'], request.session['global_region'])
-            ic(summoner_info)
-            
-            
-            chosen_summoner_info = []
-            region = []
-            region_from_dict = str
-            encrypted_summoner_id = str
-            count = 20
+            return redirect('player_info')
 
-            if summoner_info:
-                request.session['icon'] = str(summoner_info[1]) 
-                encrypted_summoner_id = summoner_info[4]
-                ic(encrypted_summoner_id)   
-                chosen_summoner_info = [summoner_info[1], summoner_info[2], 
-                                        summoner_info[3], summoner_info[6],]
-            else:
-                raise Http404("This player does not exist in {}".format(global_region))
-
-            lvl = chosen_summoner_info[3]
-            request.session['lvl'] = lvl
-            
-            puuid = summoner_info[5]  # puuid
-            request.session['puuid'] = puuid
-            ic(puuid)
-
-            chosen_summoner_info = chosen_summoner_info # + region
-            print(chosen_summoner_info)
-            return redirect('player_info')   
-        # Przekierowanie do tej samej strony, aby odświeżyć informacje
-    else:
-    # Utworzenie nowego formularza z domyślnymi wartościami z sesji
-        summoner_name = request.session.get('summoner_name', '')
-        global_region = request.session.get('global_region', '')
-        icon = request.session.get('icon', 'default')
-        ic(icon)
-        form = SummonerForm(initial={'summoner_name': summoner_name, 'region': global_region})
-    
-    puuid = request.session.get('puuid', '')
     summoner_name = request.session.get('summoner_name', '')
-    ic(summoner_name)
     global_region = request.session.get('global_region', '')
 
-    lvl  = request.session.get('lvl', '')
-    ic(lvl)
+    form = SummonerForm(initial={'summoner_name': summoner_name, 'region': global_region})
+
+    if summoner_name and global_region:
+        summoner_info = get_summoner_info(summoner_name, global_region)
+        if summoner_info:
+            request.session['icon'] = str(summoner_info[1])
+            request.session['lvl'] = summoner_info[6]
+            request.session['puuid'] = summoner_info[5]
+            request.session['id'] = summoner_info[4]
+            rendered_maestry = maestry_render(request)
+            solo_rank_info, flex_rank_info = rank_info_render(request)
+            match_ids = render_match_id(request)
+            
+            if solo_rank_info is None:
+                solo_rank_info = {}  # Pusty słownik dla unranked
+
+            if flex_rank_info is None:
+                flex_rank_info = {}  # Pusty słownik dla unranked
+
+            ic(solo_rank_info, flex_rank_info)
+            ic(match_ids)
+        else:
+            rendered_maestry = []   
+    else:
+        rendered_maestry = []
+        
     regions = choose_region()
-    
-    rendered_maestry = maestry_render(request) if puuid and global_region else []
     return render(request, 'player_info.html', {
         'form': form,
         'regions': regions,
-        'icon': icon,
-        'player_maestry_points': rendered_maestry,  # Przekazanie wyników funkcji do szablonu
-        'lvl': lvl,
+        'icon': request.session.get('icon', 'default'),
+        'player_maestry_points': rendered_maestry,
+        'lvl': request.session.get('lvl', ''),
+        'id': request.session.get('id', ''),
+        
+        'solo_rank_info': solo_rank_info,
+        'flex_rank_info': flex_rank_info,
+        
+        'match_id': match_ids,
+        
         'summoner_name': summoner_name,
         'global_region': global_region
     })
-    
-    # return render(request, 'player_info.html', {'form': form, 'regions': regions, 'icon': icon})
-   
+
 def maestry_render(request):
     puuid = request.session['puuid']
     global_region = request.session['global_region']            
@@ -110,7 +97,6 @@ def maestry_render(request):
 
     rendered_maestry = []
     for maestry in maestry_points:
-        # Przykład struktury: [chestGranted, champion_name, last_play_date, champion_level, champion_points]
         rendered_maestry.append({
             'chest_granted': maestry[0],
             'champion_name': maestry[1],
@@ -120,3 +106,32 @@ def maestry_render(request):
         })
 
     return rendered_maestry
+
+def rank_info_render(request):
+    encrypted_summoner_id = request.session['id']
+    global_region = request.session['global_region']
+
+    solo_q_info, flex_info = get_rank_info(encrypted_summoner_id, global_region)
+
+    # ic(solo_q_info, flex_info)
+
+    return solo_q_info, flex_info
+
+def render_match_id(request):
+    puuid = request.session['puuid']
+    global_region = request.session['global_region']  
+    
+    match_ids = get_match_id(puuid, global_region, 20)
+    # ic(match_ids)
+    
+    if not match_ids:
+        return []
+    
+    # rendered_match_ids = []
+    # for match in match_ids:
+    #     rendered_match_ids.append({
+    #         'match_id': match_ids[0],
+    #     })
+    
+    return match_ids
+    return rendered_match_ids

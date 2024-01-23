@@ -4,14 +4,14 @@ from icecream import ic
 from collections import Counter
 from statistics import mean
 
-from kyrciapgg.kyrciapp.python.config import get_api_key, setup_cassiopeia
-from item_dictionary import item_dictionary
-from player_profile_info import get_game_name_by_puuid
-from region_dictionary import global_region_dictionary, region_dictionary
-from summoner_spell_dictionary import summoner_spells_dictionary
+from kyrciapp.python.config import get_api_key, setup_cassiopeia
+from kyrciapp.python.item_dictionary import item_dictionary
+# from player_profile_info import get_game_name_by_puuid
+from kyrciapp.python.region_dictionary import global_region_dictionary, region_dictionary
+from kyrciapp.python.summoner_spell_dictionary import summoner_spells_dictionary
 from cassiopeia import Rune
-from region_dictionary import region_dictionary
-from queue_dictionary import queue_dictionary
+from kyrciapp.python.region_dictionary import region_dictionary
+from kyrciapp.python.queue_dictionary import queue_dictionary
 
 
 def get_match_id(puuid, global_region, count):
@@ -26,7 +26,7 @@ def get_match_id(puuid, global_region, count):
         print("Status Code:", resp.status_code)
         if resp.status_code == 200:
             match_id = resp.json()
-            print(match_id)
+            # print(match_id)
             return match_id
         
         else:
