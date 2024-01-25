@@ -336,7 +336,7 @@ def item_dictionary(item_id):
         3400: "Your Cut",
         3430: "Rite Of Ruin",
         3504: "Ardent Censer",
-        3508: "Essence Reaver",
+        # 3508: "Essence Reaver",
         3513: "Eye of the Herald",
         3599: "Kalista's Black Spear",
         3600: "Kalista's Black Spear",

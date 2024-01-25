@@ -1,8 +1,8 @@
 def queue_dictionary(queue_id):
     queue_dict = {
-        400: "Normal (Blind pick)",
+        400: "Normal (Draft)",
         420: "Ranked Solo",
-        430: "Normal (Draft)",
+        430: "Normal (Blind)",
         440: "Ranked Flex",
         450: "ARAM",
         700: "Clash",

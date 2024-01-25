@@ -3,6 +3,7 @@ import requests
 from icecream import ic
 from collections import Counter
 from statistics import mean
+from kyrciapp.python.champion_dictionary import champ_dictionary_by_name
 
 from kyrciapp.python.config import get_api_key, setup_cassiopeia
 from kyrciapp.python.item_dictionary import item_dictionary
@@ -120,21 +121,34 @@ def get_match_info_by_id(match_id, global_region):
                 kills = player['kills']                 #Y
                 deaths = player['deaths']               #Y
                 assists = player['assists']             #Y
-                kda_ratio = round((kills + assists) / deaths, 2)  #Y
+                    
+                if deaths != 0:
+                    kda_ratio = round((kills + assists) / deaths, 2)  #Y
+                else:
+                    if deaths == 0:
+                        kda_ratio = round((kills + assists), 2)
+                        
                 total_minions_killed = player['totalMinionsKilled']
                 minions_killed_min = round(total_minions_killed/(game_duration/60), 1)
                 vision_score = player['visionScore']
                 gold_earned = player['goldEarned']
                 first_Blood_Kill = player['firstBloodKill']
-                items_in_match = [item_dictionary(player['item0']), item_dictionary(player['item1']), #Y
-                                  item_dictionary(player['item2']), item_dictionary(player['item3']),
-                                  item_dictionary(player['item4']), item_dictionary(player['item5']),
-                                  item_dictionary(player['item6'])]
+                # items_in_match = [item_dictionary(player['item0']), item_dictionary(player['item1']), #Y
+                #                   item_dictionary(player['item2']), item_dictionary(player['item3']),
+                #                   item_dictionary(player['item4']), item_dictionary(player['item5']),
+                #                   item_dictionary(player['item6'])]
+                
+                items_in_match = [(player['item0']), (player['item1']), #Y
+                                  (player['item2']), (player['item3']),
+                                  (player['item4']), (player['item5']),
+                                  (player['item6'])]
                 
                 role = player['role']
                 lane = player['lane']
                 summoner1Id = summoner_spells_dictionary(player['summoner1Id'])
                 summoner2Id = summoner_spells_dictionary(player['summoner2Id'])
+
+
                 longest_time_spent_living = int((player['longestTimeSpentLiving'])/60)
                 win = player['win']
                 largest_multi_kill = player['largestMultiKill']
@@ -200,11 +214,13 @@ def player_to_loop(puuid, match_data):
         fb_kill = 0
         fb_assist = 0
         fb_participation = 0
+        games = 0
         
         if 'metadata' in match_data and 'participants' in match_data['metadata']:
             part_index = match_data['metadata']['participants'].index(puuid)
         
         # part_index = match_data['metadata']['participants'].index(puuid)
+            games = 1
             win = match_data['info']['participants'][part_index]['win']
             if win == True:
                 wins = 1
@@ -214,6 +230,8 @@ def player_to_loop(puuid, match_data):
             queue_id = match_data['info']['queueId']
             queue_name = queue_dictionary(queue_id)
             champion_name = match_data['info']['participants'][part_index]['championName']
+            champion_name = champ_dictionary_by_name(champion_name)
+            
             first_Blood_Kill = match_data['info']['participants'][part_index]['firstBloodKill']
             if first_Blood_Kill == True:
                 fb_kill = 1
@@ -230,7 +248,7 @@ def player_to_loop(puuid, match_data):
             else:
                 kda = round((kills + assists) / deaths, 2)
             
-            list = [wins, kda, champion_name, fb_participation]
+            list = [wins, kda, champion_name, fb_participation, games]
             
             
         else:
@@ -250,8 +268,12 @@ def process_looped_info(looped_info):
 
     # Sumowanie pierwszych zabójstw
     fb_participations = (sum(item[3] for item in looped_info))
+    
+    games = (sum(item[4] for item in looped_info))
+    
+    wr =  round((total_wins / games) * 100, 2)
 
-    return total_wins, average_kda, most_frequent_champion, fb_participations
+    return total_wins, average_kda, most_frequent_champion, fb_participations, games, wr
     
 # a = last_20_games_stats('PGiSiriQ2XpzwitWlp9EuOXk2KVNnO9C8wl5zczBKEkCJSBQic0vQ8vRIYCHf2vmLZtOj-u4COXnww')
 # ic(a)

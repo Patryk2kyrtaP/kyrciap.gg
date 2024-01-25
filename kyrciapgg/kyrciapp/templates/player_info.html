@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>                         
 <html>
 <head>
@@ -22,17 +23,25 @@
 </style>
 
 <style>
+    .tiny-champ-icon {
+        width: 10%;  /* Zmniejszenie szerokości obrazu do 50% szerokości rodzica */
+        height: auto; /* Zachowanie proporcji obrazu */
+    }
+</style>
+
+<style>
     .custom-card {
         background: rgb(40, 38, 43);
         border-radius: 10px; /* Zaokrąglenie rogów ramki */
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Cień ramki dla lepszego efektu */
         color:rgb(255, 255, 255);
+        margin-bottom: 15px;
     }
 </style>
 
 <style>
     .separator-border {
-        border-bottom: 20px solid rgb(33, 36, 40); /* Cienka linia, kolor biały z niską przeźroczystością */
+        border-bottom: 20px solid rgb(33, 36, 40); /* Cienka linia*/
         padding-top: 10px;
         padding-bottom: 10px;
 
@@ -45,6 +54,135 @@
         font: bold;
         font-size: 20px;
     }
+</style>
+
+<style>
+    .game-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.game-result p {
+    margin: 0;
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding-bottom: 30px;
+    padding-right: 35px;
+    padding-top: 30px;
+    /* color: red; Lub inny kolor dla WIN */
+}
+
+.game-result p:nth-child(2) {
+    color: green; /* Lub inny kolor dla LOSS */
+}
+
+
+.champion-container {
+    position: relative;
+    align-items: center;
+    /* padding-left: 20px; */
+}
+
+.champion-icon {
+    width: 70px;
+    height: 70px;
+}
+
+.champion-level {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.5); /* Półprzezroczyste tło dla lepszej czytelności */
+    color: white;
+    padding: 2px;
+}
+
+.summoner-spells img {
+    width: 35px;
+    height: 35px;
+    display: block; /* Ustawia obrazy jeden pod drugim */
+    align-items: center;
+}
+
+.win-background {
+    background-color: rgba(0, 128, 0, 0.15); /* Zielone, prześwitujące tło dla wygranych gier */
+    border-radius: 10px; /* Zaokrąglone rogi */
+}
+
+.loss-background {
+    background-color: rgba(255, 0, 0, 0.15); /* Czerwone, prześwitujące tło dla przegranych gier */
+    border-radius: 10px; /* Zaokrąglone rogi */
+}
+
+.queue-name {
+    font-weight: bold; /* Pogrubienie tekstu */
+    font-size: larger; /* Większa czcionka */
+    text-align: center; /* Wyśrodkowanie tekstu */
+}
+
+.center-text {
+    text-align: center; /* Wyśrodkowanie tekstu */
+}
+
+.date-time-info {
+    margin-top: 20px; /* Odległość od poprzedniego elementu */
+}
+
+.items-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.item-row {
+    display: flex;
+    margin-bottom: 5px; /* Odstęp między rzędami */
+}
+
+.item-row:last-child {
+    flex-grow: 1;
+}
+
+.item-icon {
+    width: 35px; /* Szerokość ikony */
+    height: 35px; /* Wysokość ikony */
+    margin-right: 5px; /* Odstęp między ikonami */
+}
+
+.last-item {
+    flex-grow: 1;
+    text-align: right;
+}
+
+.champion-container2 {
+    display: flex; /* Użyj flexboxa do wyrównania elementów w rzędzie */
+    justify-content: center; /* Wyśrodkuj ikony w poziomie */
+    gap: 10px; /* Dodaj odstęp między ikonami */
+}
+
+.champion-icon-container2 {
+    position: relative;
+    display: flex; /* Użyj flexboxa do umieszczenia tekstu na ikonie */
+    justify-content: center; /* Wyśrodkuj tekst na ikonie */
+    align-items: center; /* Wyśrodkuj tekst na ikonie w pionie */
+}
+
+.champion-level-on-icon2 {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+    line-height: 1;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 50%;
+    padding: 2px;
+}
 </style>
 
 <body class="bg-dark text-white d-flex justify-content-center align-items-top" style="min-height: 100vh;">
@@ -74,18 +212,18 @@
     
     <div class="row">
         <div class="col-sm-4">
-        <!-- Cell z player info -->
             <div class="card" style="background-color: rgb(40, 38, 43);">
                 <div class="card-body">
                     <div class="position-relative text-align: center;">
                         <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/profile-icons/{{ icon }}.jpg" alt="Profile Icon" class="img-fluid small-profile-icon rounded">
-
-
-                        <div class="position-absolute top-0 start-50 translate-middle-x left-padding ms-2 "  style="color: white; background: rgba(0, 0, 0, 0);">
+                        
+                        <!-- Dane użytkownika i region -->
+                        <div class="position-absolute top-0 start-50 translate-middle-x left-padding ms-2" style="color: white; background: rgba(0, 0, 0, 0);">
                             <span>{{ summoner_name }}, #{{ global_region }}</span>
                             <span>Level: {{ lvl }} </span>
                         </div>
-                        
+        
+                        <!-- Formularz do aktualizacji -->
                         <form method="post" class="mt-3">
                             {% csrf_token %}
                             <div class="text-center mt-2">
@@ -94,6 +232,32 @@
                             <input type="hidden" name="summoner_name" value="{{ request.session.summoner_name }}">
                             <input type="hidden" name="region" value="{{ request.session.global_region }}">
                         </form>                           
+                        
+                        <!-- Nowe pole pod przyciskiem Submit -->
+                        <ul class="row list-unstyled separator-border">
+                        </ul>
+                        <div class="new-field mt-2 text-center" style="color: white;">
+                            <!-- Tutaj dodaj treść nowego pola -->
+                            <span> {{ processed_looped_info.5 }}% WR </span>
+                            <p></p>
+                            <p></p>
+                            <!-- <span> {{ processed_looped_info.0 }} </span> -->
+                            <span> {{ processed_looped_info.1 }} KDA </span>
+                            
+                            <p></p>
+                            <span>Most played champions</span>
+                            <p></p>
+
+                            <div class="champion-container2">
+                                {% for champion_tuple in processed_looped_info.2 %}
+                                <div class="champion-icon-container2">
+                                    <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{ champion_tuple.0 }}.png" alt="{{ champion_tuple.0 }}" class="img-fluid small-profile-icon rounded" style=" width: 100px; height: 100px;">
+                                    <span class="champion-level-on-icon2">{{ champion_tuple.1 }}</span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <span>In last {{ processed_looped_info.4 }} games</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -153,7 +317,7 @@
 
 
     <div class="row pt-3">
-        <div class="col">
+        <div class="col pb-3">
             <div class="card" style="color: white; background-color: rgb(40, 38, 43);">
                 <div class="card-body">
                     <h2>Ranked Solo/Duo</h2>
@@ -185,7 +349,7 @@
                 </div>
             </div>
         </div>
-        <div class="col">
+        <div class="col  pb-3">
             <div class="card" style="color: white; background-color: rgb(40, 38, 43);">
                 <div class="card-body">
                     <h2>Ranked Flex 5v5</h2>
@@ -220,30 +384,192 @@
         </div>
     </div>
 <!-- Match history! -->
-<table>
-    <thead>
-        <tr>
-            <th>Match history</th>
 
-            <!-- Możesz dodać więcej nagłówków tabeli w zależności od dostępnych danych -->
-        </tr>
-    </thead>
-    <tbody>
-        {% for match_id in match_id %}
-            <tr>
-                <td>{{ match_id }}</td>
-                <td>
-                    <!-- Tutaj możesz dodać bardziej szczegółowe informacje o meczu, jeśli są dostępne -->
-                    <!-- Przykład: {% for detail in match_details %} -->
-                    <!-- Szczegóły meczu -->
-                    <!-- {% endfor %} -->
-                </td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="col">
+    {% for match in match_infos %}
+        <div class="card custom-card ">
+            <div class="card-body {% for game in my_player %}{% if game.match_id == match.match_id %}{% if game.win %}win-background{% else %}loss-background{% endif %}{% endif %}{% endfor %}">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td style="width: 15%;">
+                                <p class="queue-name">{{ match.queue_name }}</p> <!-- Stylizacja nazwy kolejki -->
+                                <p class="center-text">
+                                    {% if match.when_form_today == 0 %}
+                                        today
+                                    {% else %}
+                                        {% if match.when_form_today == 1 %}  
+                                            {{ match.when_form_today }} day ago
+                                        {% else %}
+                                            {{ match.when_form_today }} days ago
+                                        {% endif %}
+                                    {% endif %}
+                                </p>
+                                <div class="date-time-info center-text"> <!-- Stylizacja informacji o czasie -->
+                                    <p>Time: {{ match.game_duration }}</p>
+                                    <p>{{ match.game_version }}</p>
+                                </div>
+                            </td>
+                            <td style="width: 15%;">
+                                {% for game in my_player %}
+                                    {% if game.match_id == match.match_id %}
+                                    <div class="game-container" style="padding-left: 20px;">
+                                        
+                                        
+                                        <div class="champion-container">
+                                            <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{ game.champion_name }}.png" alt="{{ game.champion_name }}" class="img-fluid champion-icon">
+                                            <div class="champion-level">{{ game.champion_lvl }}</div>
+                                        </div>
+                                        
+                                        <div class="summoner-spells">
+                                            <img src="{% static 'images/' %}{{ game.summoner1Id }}.png" alt="{{ game.summoner1Id }}" class="img-fluid">
+                                            <img src="{% static 'images/' %}{{ game.summoner2Id }}.png" alt="{{ game.summoner2Id }}" class="img-fluid">
+                                        </div>
+                                    </div>
+                                    <!-- <div class="game-result">
+                                        {% if game.win %}
+                                            <p>WIN</p>
+                                        {% else %}
+                                            <p>LOSS</p>
+                                        {% endif %}
+                                    </div> -->
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td style="width: 15%; text-align: center;">
+                                
+                                {% for game in my_player %}
+                                    {% if game.match_id == match.match_id %}
+                                        <p style="font-weight: bold;">{{ game.kills }} / {{ game.deaths }} / {{ game.assists }}</p>
+                                        <p>{{ game.kda_ratio }} KDA</p>
+                                        <p>{{ game.total_minions_killed }}CS ({{ game.minions_killed_min }})</p>
+                                        <p>{{ game.vision_score }} vision</p>
+                                    {% endif %}
+                                
+                                {% endfor %}
+                            </td>
+                            <td style="width: 15%;">
+                                
+                                {% for game in my_player %}
+                                    {% if game.match_id == match.match_id %}
+                                        <div class="items-container">
+                                            <div class="item-row">
+                                                {% for item in game.items_in_match|slice:":3" %}
+                                                    <img src="https://cdn.darkintaqt.com/lol/c-assets/items/{{ item }}.png.webp" alt="{{ item }}" class="img-fluid item-icon">
+                                                {% endfor %}
+                                            </div>
+                                            <div class="item-row last-item">
+                                                {% for item in game.items_in_match|slice:"3:6" %}
+                                                    <img src="https://cdn.darkintaqt.com/lol/c-assets/items/{{ item }}.png.webp" alt="{{ item }}" class="img-fluid item-icon">
+                                                {% endfor %}
+                                                {% if game.items_in_match|length > 6 %}
+                                                    <img src="https://cdn.darkintaqt.com/lol/c-assets/items/{{ game.items_in_match.6 }}.png.webp" alt="{{ game.items_in_match.6 }}" class="img-fluid item-icon">
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                            
+                            
+                            <td style="width: 15%;" class="align-items-end">
+                                {% for team1 in matches_with_teams %}
+                                    {% for summoner in team1.team_1 %}
+                                        {% if team1.match_id == match.match_id %}
+                                            <div>
+                                                {% if summoner.champion_name == 'Jax' %} 
+                                                    
+                                                        <img src="https://raw.communitydragon.org/latest/game/assets/characters/jax/hud/jax_circle_0.jaxupdate.png" alt="{{ player_2 }}" class="img-fluid " style="width: 25px; height: 25px;">
+                                                        <span>{{ summoner.name }}</span>
+                                                    
+                                                    {% else %}
+                                                    {% if summoner.champion_name == 'Hwei' %} 
+                                                    
+                                                        <img src="https://raw.communitydragon.org/latest/game/assets/characters/hwei/hud/hwei_circle_0.png" alt="{{ player_2 }}" class="img-fluid " style="width: 25px; height: 25px;">
+                                                        <span>{{ summoner.name }}</span>
+                                                    
+                                                    {% else %}
+                                                        <img src="{{ summoner.champion_icon_url }}" alt="{{ summoner.champion_name }}" class="img-fluid" style="width: 25px; height: 25px;">
+                                                        <span>{{ summoner.name }}</span>
+                                                {% endif %} 
+                                                {% endif %}
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                            </td>
+
+                            <td style="width: 15%;" class="align-items-end">
+                                {% for team1 in matches_with_teams %}
+                                    {% for summoner in team1.team_2 %}
+                                        {% if team1.match_id == match.match_id %}
+                                            <div>
+                                                {% if summoner.champion_name == 'Jax' %} 
+                                                    
+                                                        <img src="https://raw.communitydragon.org/latest/game/assets/characters/jax/hud/jax_circle_0.jaxupdate.png" alt="{{ player_2 }}" class="img-fluid " style="width: 25px; height: 25px;">
+                                                        <span>{{ summoner.name }}</span>
+                                                    
+                                                    {% else %}
+                                                    {% if summoner.champion_name == 'Hwei' %} 
+                                                    
+                                                        <img src="https://raw.communitydragon.org/latest/game/assets/characters/hwei/hud/hwei_circle_0.png" alt="{{ player_2 }}" class="img-fluid " style="width: 25px; height: 25px;">
+                                                        <span>{{ summoner.name }}</span>
+                                                    
+                                                    {% else %}
+                                                        <img src="{{ summoner.champion_icon_url }}" alt="{{ summoner.champion_name }}" class="img-fluid" style="width: 25px; height: 25px;">
+                                                        <span>{{ summoner.name }}</span>
+                                                {% endif %} 
+                                                {% endif %}
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                            </td>
+
+                                <!-- <td style="width: 20;" class="align-items-end">
+                                    
+                                    
+                                    {% for player in matches_with_teams %}
+                                        {% for player_2 in player.team_1 %}
+                                            {% if player.match_id == match.match_id %}
+                                                <p>{{ player_2 }}</p>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endfor %}
+                                </td>
+
+                                <td style="width: 5%;">
+                                {% for player in matches_with_teams %}
+                                    {% for player_2 in player.team_2_champions %}
+                                        {% if player.match_id == match.match_id %}
+                                            
+                                            <p>
+                                            <img src="https://raw.communitydragon.org/latest/game/assets/characters/{{ player_2 }}/hud/{{ player_2 }}_circle_1.png" alt="{{ player_2 }}" class="img-fluid tiny-champ-icon" style="width: 25px; height: 25px;">
+                                            </p>
+                                        {% endif %}
+                                    {% endfor %}   
+                                {% endfor %}
+                                </td>
 
 
+                                <td style="width: 20%;" class="align-items-end">
+                                    
+                                    {% for player in matches_with_teams %}
+                                        {% for player_2 in player.team_2 %}
+                                            {% if player.match_id == match.match_id %}
+                                                <p>{{ player_2 }}</p>
+                                            {% endif %}
+                                        {% endfor %}   
+                                    {% endfor %}
+                                </td> -->
+                            
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endfor %}
+</div>
 
 
 </div>

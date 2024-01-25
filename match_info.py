@@ -120,7 +120,13 @@ def get_match_info_by_id(match_id, global_region):
                 kills = player['kills']                 #Y
                 deaths = player['deaths']               #Y
                 assists = player['assists']             #Y
-                kda_ratio = round((kills + assists) / deaths, 2)  #Y
+                
+                if deaths != 0:
+                    kda_ratio = round((kills + assists) / deaths, 2)  #Y
+                else:
+                    if deaths == 0:
+                        kda_ratio = round((kills + assists), 2)
+                
                 total_minions_killed = player['totalMinionsKilled']
                 minions_killed_min = round(total_minions_killed/(game_duration/60), 1)
                 vision_score = player['visionScore']
@@ -133,8 +139,12 @@ def get_match_info_by_id(match_id, global_region):
                 
                 role = player['role']
                 lane = player['lane']
-                summoner1Id = summoner_spells_dictionary(player['summoner1Id'])
-                summoner2Id = summoner_spells_dictionary(player['summoner2Id'])
+                # summoner1Id = summoner_spells_dictionary(player['summoner1Id'])
+                # summoner2Id = summoner_spells_dictionary(player['summoner2Id'])
+                
+                summoner1Id = (player['summoner1Id'])
+                summoner2Id = (player['summoner2Id'])
+                
                 longest_time_spent_living = int((player['longestTimeSpentLiving'])/60)
                 win = player['win']
                 largest_multi_kill = player['largestMultiKill']

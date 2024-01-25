@@ -3,6 +3,7 @@ import datetime
 from icecream import ic
 from collections import Counter
 import numpy as np
+from nltk import text
 
 from kyrciapgg.kyrciapp.python.config import get_api_key
 from item_dictionary import item_dictionary
