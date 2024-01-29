@@ -38,8 +38,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'debug_toolbar',
     'kyrciapp',
-    'debug_toolbar'
 ]
 
 MIDDLEWARE = [
@@ -132,3 +132,5 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+
+AUTH_USER_MODEL = 'kyrciapp.CustomUser' 

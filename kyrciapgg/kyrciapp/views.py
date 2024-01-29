@@ -1,9 +1,14 @@
 from cgitb import text
 from django.shortcuts import render, redirect
 from django.http import Http404, HttpResponse
-from flask import request
-import nltk
 from kyrciapp.python.champion_dictionary import champ_dictionary_by_name
+
+from django.shortcuts import render, redirect
+from .forms import SignUpForm
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.views import LoginView
+
 
 from kyrciapp.python.player_profile_info import get_maestry_points, get_rank_info, get_summoner_info
 from kyrciapp.python.region_dictionary import choose_region
@@ -14,6 +19,8 @@ from django.shortcuts import render
 from .forms import SummonerForm 
 import logging
 from icecream import ic
+
+
 
 logger = logging.getLogger(__name__)
 
@@ -216,7 +223,7 @@ def render_match_id(request):
     puuid = request.session['puuid']
     global_region = request.session['global_region']  
     
-    match_ids = get_match_id(puuid, global_region, 20) #LICZBA GIER DO ZMIANY
+    match_ids = get_match_id(puuid, global_region, 3) #LICZBA GIER DO ZMIANY
     request.session['match_ids'] = match_ids 
     # ic(request.session['match_ids'])
     
@@ -309,3 +316,30 @@ def render_loop_info(request):
     processed_looped_info = process_looped_info(looped_info)
     
     return processed_looped_info
+
+
+# ================================================================================================
+def signup_view(request):
+    
+    regions = choose_region()
+
+
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            form.save()
+            email = form.cleaned_data.get('email')
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            password_confirmation = form.cleaned_data.get('password2')
+            region = form.cleaned_data.get['region']
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)
+            return redirect('home')
+    else:
+        form = SignUpForm()
+    return render(request, 'signup.html', {'form': form, 'regions': regions})
+
+
+def custom_login_view(request):
+    return LoginView.as_view(template_name='login.html')(request)

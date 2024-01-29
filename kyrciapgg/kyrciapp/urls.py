@@ -21,10 +21,14 @@ Including another URLconf
 from django.urls import path, include
 from . import views
 import debug_toolbar
+from django.contrib.auth.views import LoginView, LogoutView
 
 urlpatterns = [
     path('', views.index, name='index'),
     path('player_info/', views.player_info, name='player_info'),
     path('__debug__/', include(debug_toolbar.urls)),
+    path('signup/', views.signup_view, name='signup'),
+    path('login/', views.custom_login_view, name='login'),
+    path('logout/', LogoutView.as_view(), name='logout'),
 ]
 
