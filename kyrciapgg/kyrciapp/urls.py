@@ -28,7 +28,10 @@ urlpatterns = [
     path('player_info/', views.player_info, name='player_info'),
     path('__debug__/', include(debug_toolbar.urls)),
     path('signup/', views.signup_view, name='signup'),
-    path('login/', views.custom_login_view, name='login'),
-    path('logout/', LogoutView.as_view(), name='logout'),
+    path('login/',  views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
+    path('profile/', views.profile_view, name='profile'),
+    path('logout_confirm/', views.logout_confirm_view, name='logout_confirm'),
+    path('confirm_logout/', views.confirm_logout, name='confirm_logout'),
 ]
 

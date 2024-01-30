@@ -1,24 +1,24 @@
 from cgitb import text
 from django.shortcuts import render, redirect
 from django.http import Http404, HttpResponse
-from kyrciapp.python.champion_dictionary import champ_dictionary_by_name
 
-from django.shortcuts import render, redirect
+from django.contrib.auth import login, authenticate
+from django.contrib.auth import logout
 from .forms import SignUpForm
-from django.contrib.auth import authenticate, login
+from .forms import SummonerForm 
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LoginView
+from django.http import HttpResponseRedirect
+from django.views.decorators.http import require_POST
 
-
+from kyrciapp.python.champion_dictionary import champ_dictionary_by_name
 from kyrciapp.python.player_profile_info import get_maestry_points, get_rank_info, get_summoner_info
 from kyrciapp.python.region_dictionary import choose_region
 from kyrciapp.python.match_info import get_general_match_info_by_id, get_match_id, get_match_info_by_id, loop_through_matches, player_to_loop, process_looped_info
 from kyrciapp.python.champion_dictionary import champ_dictionary
-from .forms import SummonerForm 
-from django.shortcuts import render
-from .forms import SummonerForm 
-import logging
 from icecream import ic
+import logging
+
 
 
 
@@ -320,26 +320,51 @@ def render_loop_info(request):
 
 # ================================================================================================
 def signup_view(request):
-    
     regions = choose_region()
-
-
+    
+    
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
-            form.save()
-            email = form.cleaned_data.get('email')
-            username = form.cleaned_data.get('username')
-            raw_password = form.cleaned_data.get('password1')
-            password_confirmation = form.cleaned_data.get('password2')
-            region = form.cleaned_data.get['region']
-            user = authenticate(username=username, password=raw_password)
+            user = form.save()
             login(request, user)
-            return redirect('home')
+            return redirect('index') 
     else:
         form = SignUpForm()
+
     return render(request, 'signup.html', {'form': form, 'regions': regions})
 
 
-def custom_login_view(request):
-    return LoginView.as_view(template_name='login.html')(request)
+
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect('index')
+        else:
+            return render(request, 'login.html', {'error_message': 'Incorrect username or password'})
+
+    return render(request, 'login.html')
+
+
+
+def profile_view(request):
+    return render(request, 'profile.html')
+
+def logout_view(request):
+    logout(request)
+    return redirect('index')
+
+def logout_confirm_view(request):
+    # Strona potwierdzenia wylogowania
+    return render(request, 'logout_confirm.html')
+
+@require_POST
+def confirm_logout(request):
+    # Wylogowanie użytkownika
+    logout(request)
+    return HttpResponseRedirect('/')

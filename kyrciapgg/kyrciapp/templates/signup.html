@@ -19,8 +19,7 @@
             {% csrf_token %}
     
             <!-- Add a title and description -->
-            <br> <!-- Empty line 1 -->
-            <br> <!-- Empty line 2 -->
+
             <div>
                 <p class="text-center" style="font-weight: bold; font-size: xx-large;">
                     Register
@@ -34,31 +33,58 @@
     
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email">
+                <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" 
+                    value="{{ form.email.value|default_if_none:'' }}" 
+                    {% if form.email.errors %} is-invalid {% endif %}>
+                {% for error in form.email.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                {% endfor %}
             </div>
+            
             <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
-                <input type="text" class="form-control" id="username" name="username" placeholder="Summoner name">
+                <input type="text" class="form-control" id="username" name="username" placeholder="Summoner name"
+                    value="{{ form.username.value|default_if_none:'' }}" 
+                    {% if form.username.errors %} is-invalid {% endif %}>
+                {% for error in form.username.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                {% endfor %}
             </div>
 
 
             <div class="mb-3">
                 <label for="region" class="form-label">Region</label>
-                <select id="region" name="region" class="form-select">
+                <select id="region" name="region" class="form-select"
+                        {% if form.region.errors %} is-invalid {% endif %}>
                     {% for code, name in regions %}
-                    <option value="{{ code }}">{{ name }}</option>
+                        <option value="{{ code }}"
+                                {% if form.region.value == code %} selected {% endif %}>
+                            {{ name }}
+                        </option>
                     {% endfor %}
                 </select>
+                {% for error in form.region.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                {% endfor %}
             </div>
 
             
             <div class="mb-3">
                 <label for="password1" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password1" name="password1" placeholder="Create a password">
+                <input type="password" class="form-control" id="password1" name="password1" placeholder="Create a password"
+                       {% if form.password1.errors %} is-invalid {% endif %}>
+                {% for error in form.password1.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                {% endfor %}
             </div>
+            
             <div class="mb-3">
                 <label for="password2" class="form-label">Confirm Password</label>
-                <input type="password" class="form-control" id="password2" name="password2" placeholder="Confirm your password">
+                <input type="password" class="form-control" id="password2" name="password2" placeholder="Confirm your password"
+                       {% if form.password2.errors %} is-invalid {% endif %}>
+                {% for error in form.password2.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                {% endfor %}
             </div>
     
             <!-- Add a button for registration -->
@@ -72,9 +98,8 @@
             <!-- Add empty lines and registration link -->
             <br> <!-- Empty line 1 -->
             <br> <!-- Empty line 2 -->
-            <br> <!-- Empty line 3 -->
+
             
-            <br> <!-- Empty line 4 -->
 
                 <p class="text-center">Already have an account? <a href="{% url 'login' %}">Log in here</a></p>
             </div>

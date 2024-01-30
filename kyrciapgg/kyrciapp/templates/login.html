@@ -11,7 +11,7 @@
     
 
     <div class="w-25 p-4 rounded" style="background-color: rgb(40, 38, 43);">
-        <form method="post " >
+        <form method="post" action="{% url 'login' %}" >
             {% csrf_token %}
 
             <br> <!-- Empty line 1 -->
@@ -40,8 +40,14 @@
                 <a href="{% url 'index' %}" class="btn btn-secondary">
                     <i class="fas fa-home"></i>
                 </a>
+                
             </div>
             <br> <!-- Empty line 1 -->
+            {% if error_message %}
+                <div class="alert alert-danger text-center">
+                    {{ error_message }}
+                </div>
+            {% endif %}
             <br> <!-- Empty line 2 -->
             <br> <!-- Empty line 3 -->
 
