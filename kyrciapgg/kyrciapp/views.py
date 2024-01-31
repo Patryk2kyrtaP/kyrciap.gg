@@ -1,7 +1,10 @@
 from cgitb import text
 from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404
 from django.http import Http404, HttpResponse
 
+from .models import FollowedSummoner
+from django.contrib import messages
 from django.contrib.auth import login, authenticate
 from django.contrib.auth import logout
 from .forms import SignUpForm
@@ -12,13 +15,12 @@ from django.http import HttpResponseRedirect
 from django.views.decorators.http import require_POST
 
 from kyrciapp.python.champion_dictionary import champ_dictionary_by_name
-from kyrciapp.python.player_profile_info import get_maestry_points, get_rank_info, get_summoner_info
+from kyrciapp.python.player_profile_info import check_summoner_exists, get_maestry_points, get_rank_info, get_summoner_info
 from kyrciapp.python.region_dictionary import choose_region
 from kyrciapp.python.match_info import get_general_match_info_by_id, get_match_id, get_match_info_by_id, loop_through_matches, player_to_loop, process_looped_info
 from kyrciapp.python.champion_dictionary import champ_dictionary
 from icecream import ic
 import logging
-
 
 
 
@@ -350,10 +352,53 @@ def login_view(request):
 
     return render(request, 'login.html')
 
+# =====================================================================================================
 
+def follow_summoner_view(request):
+
+    if request.method == 'POST':
+        summoner_name = request.POST.get('summoner_name')
+        region = request.POST.get('region')
+
+        if check_summoner_exists(summoner_name, region) == True:
+        # Utworzenie nowego obiektu FollowedSummoner i zapisanie go
+            if FollowedSummoner.objects.filter(user=request.user, name=summoner_name, region=region).exists():
+                # Gracz jest już obserwowany, więc wyświetlamy komunikat
+                message = f"Player {summoner_name} is already followed."
+                followed_summoners = FollowedSummoner.objects.filter(user=request.user)
+                regions = choose_region()
+                context = {
+                    'error_message': message,
+                    'regions': regions,
+                    'followed_summoners': followed_summoners
+                }
+                return render(request, 'profile.html', context)
+
+            # Gracz nie jest jeszcze obserwowany, więc dodajemy go
+            followed_summoner = FollowedSummoner(user=request.user, name=summoner_name, region=region)
+            followed_summoner.save()
+
+        else:          
+            messages.error(request, f"Summoner {summoner_name} does not exist in region {region}.")
+        
+        return redirect('profile')
+
+    return render(request, 'index.html')
+
+def unfollow_summoner_view(request, summoner_id):
+    summoner = get_object_or_404(FollowedSummoner, id=summoner_id, user=request.user)
+    summoner.delete()
+    return redirect('profile')
 
 def profile_view(request):
-    return render(request, 'profile.html')
+    regions = choose_region()
+    followed_summoners = FollowedSummoner.objects.filter(user=request.user)
+    context = {
+        'regions': regions,
+        'followed_summoners': followed_summoners
+    }
+    return render(request, 'profile.html', context)
+# =====================================================================================================
 
 def logout_view(request):
     logout(request)
@@ -368,3 +413,145 @@ def confirm_logout(request):
     # Wylogowanie użytkownika
     logout(request)
     return HttpResponseRedirect('/')
+
+# =====================================================================================================
+def player_info_view(request, summoner_name, region):
+    # Tutaj logika pobierania danych gracza na podstawie summoner_name i region
+    if request.method == 'POST':
+        form = SummonerForm(request.POST)
+        if form.is_valid():
+            return redirect('player_info')
+    
+    if summoner_name and region:    
+        summoner_info = get_summoner_info(summoner_name, region)
+
+        if summoner_info:
+            request.session['icon'] = str(summoner_info[1])
+            request.session['lvl'] = summoner_info[6]
+            request.session['puuid'] = summoner_info[5]
+            request.session['id'] = summoner_info[4]
+            rendered_maestry = maestry_render(request)
+            solo_rank_info, flex_rank_info = rank_info_render(request)           
+            match_ids = render_match_id(request)
+            match_ids_count = len(match_ids)
+            match_infos = render_get_general_match_info_by_id(request) if match_ids else []
+            # ic(match_infos)
+            
+            match_detailed_infos = render_get_match_info_by_id(request) if match_ids else []
+            # ic(match_detailed_infos)
+            
+            
+            matches_with_teams = []
+            for i in range(0, len(match_detailed_infos), 10):
+                match_players = match_detailed_infos[i:i+10]
+                if len(match_players) == 10:
+                    team_1_data = []
+                    team_2_data = []
+
+                    for index, player in enumerate(match_players):
+                        player_data = {
+                            'name': player['summoner_name'] if player['summoner_name'] else 'Bambik',
+                            'champion_icon_url': f"https://raw.communitydragon.org/latest/game/assets/characters/{player['champion_name'].lower()}/hud/{player['champion_name'].lower()}_circle_1.png",
+                            'champion_name': player['champion_name']
+                        }
+
+                        if index < 5:
+                            team_1_data.append(player_data)
+                        else:
+                            team_2_data.append(player_data)
+
+                    matches_with_teams.append({
+                        'match_id': i // 10 + 1,
+                        'team_1': team_1_data,
+                        'team_2': team_2_data
+                    })
+            
+            # ic(matches_with_teams)
+            my_player = []
+            for i in range(0, len(match_detailed_infos), 10):
+                match_players = match_detailed_infos[i:i+10]
+                if len(match_players) == 10:
+                    player_1 = []
+                    for player in match_players[:10]:
+                        if player['summoner_name'] == summoner_name:
+                            champion_name = champ_dictionary_by_name(player['champion_name'])
+                            champion_lvl = player['champ_level']
+                            summoner1Id = player['summoner1Id']
+                            summoner2Id = player['summoner2Id']
+                            kills = player['kills']
+                            deaths = player['deaths']
+                            assists = player['assists']
+                            kda_ratio = player['kda_ratio']
+                            total_minions_killed = player['total_minions_killed']
+                            minions_killed_min = player['minions_killed_min']
+                            vision_score = player['vision_score']
+                            win = player['win']
+                            items_in_match = player['items_in_match']
+                            
+                    my_player.append({
+                        'match_id': i // 10 + 1,
+                        'champion_name': champion_name,
+                        'champion_lvl': champion_lvl,
+                        'summoner1Id': summoner1Id,
+                        'summoner2Id': summoner2Id,
+                        'kills': kills,
+                        'deaths': deaths,
+                        'assists': assists,
+                        'kda_ratio': kda_ratio,
+                        'total_minions_killed': total_minions_killed,
+                        'minions_killed_min': minions_killed_min,
+                        'vision_score': vision_score,
+                        'win': win,
+                        'items_in_match': items_in_match
+                    })
+
+            
+            
+            processed_looped_info = render_loop_info(request)
+            
+            ic(processed_looped_info)
+            
+            # ic(match_detailed_infos)
+
+            
+            if solo_rank_info is None:
+                solo_rank_info = {}  # Pusty słownik dla unranked
+
+            if flex_rank_info is None:
+                flex_rank_info = {}  # Pusty słownik dla unranked
+
+            # ic(solo_rank_info, flex_rank_info)
+            # ic(match_ids)
+        else:
+            rendered_maestry = []   
+    else:
+        rendered_maestry = []
+        
+    regions = choose_region()
+    return render(request, 'player_info.html', {
+        # 'form': form,
+        'regions': regions,
+        'icon': request.session.get('icon', 'default'),
+        'player_maestry_points': rendered_maestry,
+        'lvl': request.session.get('lvl', ''),
+        'id': request.session.get('id', ''),
+        
+        'solo_rank_info': solo_rank_info,
+        'flex_rank_info': flex_rank_info,
+        
+        'match_id': match_ids,
+        'match_ids_count': match_ids_count,
+        
+        'match_infos': match_infos,
+        
+        'match_detailed_infos': match_detailed_infos,
+        
+        'matches_with_teams': matches_with_teams, 
+        
+        'my_player': my_player,
+        
+        'processed_looped_info': processed_looped_info,
+        
+        'summoner_name': summoner_name,
+        'global_region': region
+    })

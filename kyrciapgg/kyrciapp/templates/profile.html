@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <head>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+        <title>Wpisz nazwę gracza</title>
+    
+    <title>Profile</title>
+
+<style>
+.custom-alert {
+
+    display: inline-block; 
+
+    color: #000000;
+    background-color: rgb(248, 215, 218);
+    border-color: #dc3545;
+    padding: .75rem 1.25rem;
+    border-radius: .25rem;
+}
+.color-white {
+
+    color: rgb(0, 0, 0) !important;
+
+}
+
+
+</style>
+</head>
+<body class="bg-dark text-white">
+
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-1"> </div>
+            <!-- Lewa strona -->
+            <div class="col text-center padding-left color-white">
+                {% if user.is_authenticated %}
+                    <button class="btn btn-info color-white" type="button" disabled>Welcome, {{ user.username }}!</button>
+                {% endif %}
+            </div>
+    
+            <!-- Prawa strona -->
+            <div class="col text-center ">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'logout_confirm' %}" class="btn btn-secondary">Log out</a>
+                    <!-- Przycisk z ikoną osoby dla zalogowanych użytkowników -->
+                    <a href="{% url 'index' %}" class="btn btn-secondary ">
+                        <i class="fas fa-home"></i>
+                    </a>
+                {% endif %}
+            </div>
+            <div class="col-md-1"> </div>
+        </div>
+    </div>
+
+<!-- Formularz do dodawania obserwowanych graczy -->
+<div class="d-flex justify-content-center align-items-center" style="min-height: 15vh;">
+    <form method="post" action="{% url 'follow_summoner' %}" class="w-50">
+        {% csrf_token %}
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Summoner name" name="summoner_name">
+            <select class="form-select" name="region">
+                {% for code, name in regions %}
+                    <option value="{{ code }}">{{ name }}</option>
+                {% endfor %}
+            </select>
+            <button class="btn btn-primary" type="submit">Follow Summoner</button>
+        </div>
+        <div style="text-align: center; margin-top: 10px;">
+            {% if error_message %}
+                <div class="alert alert-danger" style="display: inline-block; max-width: 80%;" >
+                    {{ error_message }}
+                </div>
+            {% endif %}
+        </div>
+    </form>
+</div>
+
+<!-- Lista obserwowanych graczy -->
+<div class="d-flex justify-content-center align-items-center" style="min-height: 10vh;">
+    <div class="w-50">
+        <h2>Followed Summoners</h2>
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} custom-alert d-flex justify-content-center align-items-center">
+            {{ message }}
+        </div>
+        {% endfor %}
+        <ul class="list-group">
+            {% for summoner in followed_summoners %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <a href="{% url 'player_info_with_args' summoner_name=summoner.name region=summoner.region %}">
+                        {{ summoner.name }} ({{ summoner.region }})
+                    </a>
+<!--                 
+                    <span>
+                        {{ summoner.name }} ({{ summoner.region }})
+                    </span> -->
+                    <!-- Przycisk Unfollow -->
+                    <form method="post" action="{% url 'unfollow_summoner' summoner.id %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm">Unfollow</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+</body>
+</html>
+

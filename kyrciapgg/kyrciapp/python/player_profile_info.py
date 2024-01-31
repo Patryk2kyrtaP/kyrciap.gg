@@ -176,6 +176,16 @@ def get_game_name_by_puuid(puuid, global_region):
         print("Error occurred:", e)
         return None
 
+
+def check_summoner_exists(summoner_name, region):
+    api_key  = get_api_key()
+    url = f"https://{region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/{summoner_name}"
+
+    response = requests.get(url, headers={"X-Riot-Token": api_key})
+    return response.status_code == 200
+
+# aaa = check_summoner_exists('Vugen', 'EUN1')
+# ic(aaa)
 # game_name = get_game_name_by_puuid('PGiSiriQ2XpzwitWlp9EuOXk2KVNnO9C8wl5zczBKEkCJSBQic0vQ8vRIYCHf2vmLZtOj-u4COXnww')
 
 
