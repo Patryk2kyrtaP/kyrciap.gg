@@ -1,0 +1,4 @@
+<div>
+    <!-- Tutaj umieść dane asynchroniczne -->
+    {{ async_data }}
+</div>

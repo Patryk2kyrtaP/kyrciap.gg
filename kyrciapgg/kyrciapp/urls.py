@@ -36,6 +36,7 @@ urlpatterns = [
     path('follow_summoner/', views.follow_summoner_view, name='follow_summoner'),
     path('unfollow_summoner/<int:summoner_id>/', views.unfollow_summoner_view, name='unfollow_summoner'),
     path('player_info/<str:summoner_name>/<str:region>/', views.player_info_view, name='player_info_with_args'),
+    # path('async-data/', views.async_data_view, name='async_data_view'),
 
     
 ]

@@ -9,6 +9,10 @@
     <title>Profile</title>
 
 <style>
+        .small-tier-icon {
+        width: 5%;  /* Zmniejszenie szerokości obrazu do 50% szerokości rodzica */
+        height: auto; /* Zachowanie proporcji obrazu */
+    }
 .custom-alert {
 
     display: inline-block; 
@@ -22,8 +26,39 @@
 .color-white {
 
     color: rgb(0, 0, 0) !important;
-
 }
+
+.custom-card {
+        background: rgb(40, 38, 43);
+        border-radius: 10px; /* Zaokrąglenie rogów ramki */
+        border-color: rgba(0, 0, 0, 0.1);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Cień ramki dla lepszego efektu */
+        color:rgb(255, 255, 255);
+        margin-bottom: 15px;
+    }
+
+    .rank-info {
+        margin-left: 100px; /* Ustawienie marginesu lewego na 100px */
+        display: flex; /* Użycie flexboxa do wyrównania treści */
+        flex-direction: column; /* Ustawienie kierunku elementów dzieci na pionowy */
+        align-items: flex-start; /* Wyrównanie dzieci do lewej strony */
+    }
+
+    .summoner-name {
+        margin-right: auto; /* Spowoduje to "odpychanie" informacji o randze na prawo */
+        white-space: nowrap; /* Zapobiegnie łamaniu się nazwy użytkownika */
+        overflow: hidden; /* Ukrycie zawartości wychodzącej poza pole */
+        text-overflow: ellipsis; /* Dodanie "..." jeśli nazwa jest za długa */
+    }
+    .rank-row {
+        display: flex;
+        align-items: center;
+        gap: 5px; /* Odstęp pomiędzy ikoną a tekstem */
+    }
+
+    .no-wrap {
+        white-space: nowrap;
+    }
 
 
 </style>
@@ -87,17 +122,39 @@
             {{ message }}
         </div>
         {% endfor %}
-        <ul class="list-group">
+        <ul class="list-group" >
             {% for summoner in followed_summoners %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <a href="{% url 'player_info_with_args' summoner_name=summoner.name region=summoner.region %}">
+                
+                <li class="list-group-item d-flex justify-content-between align-items-center custom-card white-space: nowrap" >
+                    <a href="{% url 'player_info_with_args' summoner_name=summoner.name region=summoner.region %} "class="no-wrap">
                         {{ summoner.name }} ({{ summoner.region }})
+   
                     </a>
-<!--                 
-                    <span>
-                        {{ summoner.name }} ({{ summoner.region }})
-                    </span> -->
-                    <!-- Przycisk Unfollow -->
+                    <div class="rank-info">
+                        
+                        <div class="rank-row">
+                            {% if summoner.solo_rank_info %}
+                                <span>Solo/Duo:</span>
+                                <img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/{{ summoner.solo_rank_info.Tier|lower }}.png" alt="Tier Icon" class="small-tier-icon">
+                                <span>{{ summoner.solo_rank_info.Rank }} - {{ summoner.solo_rank_info.League_Points }}LP - Win Rate: {{ summoner.solo_rank_info.Win_Percentage }}%</span>
+                            {% else %}
+                                <span>Solo/Duo: Unranked</span>
+                            {% endif %}
+                        </div>
+                    
+                        
+                        <div class="rank-row">
+                            {% if summoner.flex_rank_info %}
+                                <span>Flex:</span>
+                                <img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/{{ summoner.flex_rank_info.Tier|lower }}.png" alt="Tier Icon" class="small-tier-icon">
+                                <span>{{ summoner.flex_rank_info.Rank }} - {{ summoner.flex_rank_info.League_Points }}LP - Win Rate: {{ summoner.flex_rank_info.Win_Percentage }}%</span>
+                            {% else %}
+                                <span>Flex: Unranked</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                
                     <form method="post" action="{% url 'unfollow_summoner' summoner.id %}" class="d-inline">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-danger btn-sm">Unfollow</button>

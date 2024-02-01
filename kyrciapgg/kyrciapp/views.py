@@ -13,6 +13,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LoginView
 from django.http import HttpResponseRedirect
 from django.views.decorators.http import require_POST
+from django.http import JsonResponse
 
 from kyrciapp.python.champion_dictionary import champ_dictionary_by_name
 from kyrciapp.python.player_profile_info import check_summoner_exists, get_maestry_points, get_rank_info, get_summoner_info
@@ -57,109 +58,116 @@ def player_info(request):
 
     form = SummonerForm(initial={'summoner_name': summoner_name, 'region': global_region})
 
-    if summoner_name and global_region:
-        summoner_info = get_summoner_info(summoner_name, global_region)
-        if summoner_info:
-            request.session['icon'] = str(summoner_info[1])
-            request.session['lvl'] = summoner_info[6]
-            request.session['puuid'] = summoner_info[5]
-            request.session['id'] = summoner_info[4]
-            rendered_maestry = maestry_render(request)
-            solo_rank_info, flex_rank_info = rank_info_render(request)           
-            match_ids = render_match_id(request)
-            match_ids_count = len(match_ids)
-            match_infos = render_get_general_match_info_by_id(request) if match_ids else []
-            # ic(match_infos)
-            
-            match_detailed_infos = render_get_match_info_by_id(request) if match_ids else []
-            # ic(match_detailed_infos)
-            
-            
-            matches_with_teams = []
-            for i in range(0, len(match_detailed_infos), 10):
-                match_players = match_detailed_infos[i:i+10]
-                if len(match_players) == 10:
-                    team_1_data = []
-                    team_2_data = []
 
-                    for index, player in enumerate(match_players):
-                        player_data = {
-                            'name': player['summoner_name'] if player['summoner_name'] else 'Bambik',
-                            'champion_icon_url': f"https://raw.communitydragon.org/latest/game/assets/characters/{player['champion_name'].lower()}/hud/{player['champion_name'].lower()}_circle_1.png",
-                            'champion_name': player['champion_name']
-                        }
+    if check_summoner_exists(summoner_name, global_region) == True:
 
-                        if index < 5:
-                            team_1_data.append(player_data)
-                        else:
-                            team_2_data.append(player_data)
+        if summoner_name and global_region:
+            summoner_info = get_summoner_info(summoner_name, global_region)
+            if summoner_info:
+                request.session['icon'] = str(summoner_info[1])
+                request.session['lvl'] = summoner_info[6]
+                request.session['puuid'] = summoner_info[5]
+                request.session['id'] = summoner_info[4]
+                rendered_maestry = maestry_render(request)
+                solo_rank_info, flex_rank_info = rank_info_render(request)           
+                match_ids = render_match_id(request)
+                match_ids_count = len(match_ids)
+                match_infos = render_get_general_match_info_by_id(request) if match_ids else []
+                # ic(match_infos)
+                
+                match_detailed_infos = render_get_match_info_by_id(request) if match_ids else []
+                # ic(match_detailed_infos)
+                
+                
+                matches_with_teams = []
+                for i in range(0, len(match_detailed_infos), 10):
+                    match_players = match_detailed_infos[i:i+10]
+                    if len(match_players) == 10:
+                        team_1_data = []
+                        team_2_data = []
 
-                    matches_with_teams.append({
-                        'match_id': i // 10 + 1,
-                        'team_1': team_1_data,
-                        'team_2': team_2_data
-                    })
-            
-            # ic(matches_with_teams)
-            my_player = []
-            for i in range(0, len(match_detailed_infos), 10):
-                match_players = match_detailed_infos[i:i+10]
-                if len(match_players) == 10:
-                    player_1 = []
-                    for player in match_players[:10]:
-                        if player['summoner_name'] == summoner_name:
-                            champion_name = champ_dictionary_by_name(player['champion_name'])
-                            champion_lvl = player['champ_level']
-                            summoner1Id = player['summoner1Id']
-                            summoner2Id = player['summoner2Id']
-                            kills = player['kills']
-                            deaths = player['deaths']
-                            assists = player['assists']
-                            kda_ratio = player['kda_ratio']
-                            total_minions_killed = player['total_minions_killed']
-                            minions_killed_min = player['minions_killed_min']
-                            vision_score = player['vision_score']
-                            win = player['win']
-                            items_in_match = player['items_in_match']
-                            
-                    my_player.append({
-                        'match_id': i // 10 + 1,
-                        'champion_name': champion_name,
-                        'champion_lvl': champion_lvl,
-                        'summoner1Id': summoner1Id,
-                        'summoner2Id': summoner2Id,
-                        'kills': kills,
-                        'deaths': deaths,
-                        'assists': assists,
-                        'kda_ratio': kda_ratio,
-                        'total_minions_killed': total_minions_killed,
-                        'minions_killed_min': minions_killed_min,
-                        'vision_score': vision_score,
-                        'win': win,
-                        'items_in_match': items_in_match
-                    })
+                        for index, player in enumerate(match_players):
+                            player_data = {
+                                'name': player['summoner_name'] if player['summoner_name'] else 'Bambik',
+                                'champion_icon_url': f"https://raw.communitydragon.org/latest/game/assets/characters/{player['champion_name'].lower()}/hud/{player['champion_name'].lower()}_circle_1.png",
+                                'champion_name': player['champion_name']
+                            }
 
-            
-            
-            processed_looped_info = render_loop_info(request)
-            
-            ic(processed_looped_info)
-            
-            # ic(match_detailed_infos)
+                            if index < 5:
+                                team_1_data.append(player_data)
+                            else:
+                                team_2_data.append(player_data)
 
-            
-            if solo_rank_info is None:
-                solo_rank_info = {}  # Pusty słownik dla unranked
+                        matches_with_teams.append({
+                            'match_id': i // 10 + 1,
+                            'team_1': team_1_data,
+                            'team_2': team_2_data
+                        })
+                
+                # ic(matches_with_teams)
+                my_player = []
+                for i in range(0, len(match_detailed_infos), 10):
+                    match_players = match_detailed_infos[i:i+10]
+                    if len(match_players) == 10:
+                        player_1 = []
+                        for player in match_players[:10]:
+                            if player['summoner_name'] == summoner_name:
+                                champion_name = champ_dictionary_by_name(player['champion_name'])
+                                champion_lvl = player['champ_level']
+                                summoner1Id = player['summoner1Id']
+                                summoner2Id = player['summoner2Id']
+                                kills = player['kills']
+                                deaths = player['deaths']
+                                assists = player['assists']
+                                kda_ratio = player['kda_ratio']
+                                total_minions_killed = player['total_minions_killed']
+                                minions_killed_min = player['minions_killed_min']
+                                vision_score = player['vision_score']
+                                win = player['win']
+                                items_in_match = player['items_in_match']
+                                
+                        my_player.append({
+                            'match_id': i // 10 + 1,
+                            'champion_name': champion_name,
+                            'champion_lvl': champion_lvl,
+                            'summoner1Id': summoner1Id,
+                            'summoner2Id': summoner2Id,
+                            'kills': kills,
+                            'deaths': deaths,
+                            'assists': assists,
+                            'kda_ratio': kda_ratio,
+                            'total_minions_killed': total_minions_killed,
+                            'minions_killed_min': minions_killed_min,
+                            'vision_score': vision_score,
+                            'win': win,
+                            'items_in_match': items_in_match
+                        })
 
-            if flex_rank_info is None:
-                flex_rank_info = {}  # Pusty słownik dla unranked
+                
+                
+                processed_looped_info = render_loop_info(request)
+                
+                ic(processed_looped_info)
+                
+                # ic(match_detailed_infos)
 
-            # ic(solo_rank_info, flex_rank_info)
-            # ic(match_ids)
+                
+                if solo_rank_info is None:
+                    solo_rank_info = {}  # Pusty słownik dla unranked
+
+                if flex_rank_info is None:
+                    flex_rank_info = {}  # Pusty słownik dla unranked
+
+                # ic(solo_rank_info, flex_rank_info)
+                # ic(match_ids)
+            else:
+                rendered_maestry = []   
         else:
-            rendered_maestry = []   
-    else:
-        rendered_maestry = []
+            rendered_maestry = []
+    
+    else: 
+        messages.error(request, f"Summoner {summoner_name} does not exist in region {global_region}.")
+        return redirect('index')
         
     regions = choose_region()
     return render(request, 'player_info.html', {
@@ -217,7 +225,7 @@ def rank_info_render(request):
 
     solo_q_info, flex_info = get_rank_info(encrypted_summoner_id, global_region)
 
-    ic(solo_q_info, flex_info)
+    # ic(solo_q_info, flex_info)
 
     return solo_q_info, flex_info
 
@@ -363,14 +371,13 @@ def follow_summoner_view(request):
         if check_summoner_exists(summoner_name, region) == True:
         # Utworzenie nowego obiektu FollowedSummoner i zapisanie go
             if FollowedSummoner.objects.filter(user=request.user, name=summoner_name, region=region).exists():
-                # Gracz jest już obserwowany, więc wyświetlamy komunikat
                 message = f"Player {summoner_name} is already followed."
                 followed_summoners = FollowedSummoner.objects.filter(user=request.user)
                 regions = choose_region()
                 context = {
                     'error_message': message,
                     'regions': regions,
-                    'followed_summoners': followed_summoners
+                    'followed_summoners': followed_summoners,
                 }
                 return render(request, 'profile.html', context)
 
@@ -393,7 +400,34 @@ def unfollow_summoner_view(request, summoner_id):
 def profile_view(request):
     regions = choose_region()
     followed_summoners = FollowedSummoner.objects.filter(user=request.user)
-    context = {
+    
+    
+    
+    for summoner in followed_summoners:
+        summoner_info = get_summoner_info(summoner.name, summoner.region)
+        if summoner_info:
+            # name_region = summoner.name + summoner.region
+            # # ic(name_region)
+            # length = len(name_region)
+            # # ic(length)
+            # set_length = 20
+            # length_dif = set_length - length
+            # # ic(length_dif)
+            # summoner.spaces = "a" * length_dif
+            # ic(summoner.spaces)
+            request.session['id'] = summoner_info[4]
+            request.session['global_region'] = summoner.region
+            solo_rank_info, flex_rank_info = rank_info_render(request)
+            # ic(solo_rank_info)
+            # ic(flex_rank_info)
+    #         # Dodanie informacji o randze do obiektu summoner
+            summoner.solo_rank_info = solo_rank_info if solo_rank_info else {}
+            summoner.flex_rank_info = flex_rank_info if flex_rank_info else {}
+    
+    
+
+
+    context = {    
         'regions': regions,
         'followed_summoners': followed_summoners
     }
@@ -555,3 +589,4 @@ def player_info_view(request, summoner_name, region):
         'summoner_name': summoner_name,
         'global_region': region
     })
+

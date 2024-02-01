@@ -9,6 +9,12 @@
 </head>
 
 <style>
+     .btn-custom {
+        height: 42px; /* Wysokość dopasowana do wysokości pola wyszukiwania */
+        white-space: nowrap; /* Zapobiega przenoszeniu tekstu do nowej linii */
+        margin-left: 8px;
+    }
+
     .small-profile-icon {
         width: 25%;  /* Zmniejszenie szerokości obrazu do 50% szerokości rodzica */
         height: auto; /* Zachowanie proporcji obrazu */
@@ -186,28 +192,38 @@
 </style>
 
 <body class="bg-dark text-white d-flex justify-content-center align-items-top" style="min-height: 100vh;">
-<div class="container">
-    <div class="container d-flex align-items-top justify-content-between">
-        <form method="post" class="w-100">
-        {% csrf_token %}
-            <div class="mb-3 d-flex justify-content-between align-items-left">
-                <a href="{% url 'index' %}" class="btn btn-secondary mb-2 me-3 px-3 py-2 ">
-                    <i class="fas fa-home"></i>
-                </a>
-            
-                <input type="text" class="form-control mb-2 flex-grow-2 me-2" id="summoner_name" name="summoner_name" placeholder="Enter summoner name">
-                <select id="region" name="region" class="form-selec mb-2 me-2 rounded">
-                {% for code, name in regions %}
-                <option value="{{ code }}" {% if code == global_region %}selected{% endif %}>{{ name }}</option>
-                {% endfor %}
-                </select>
-            
-                <button type="submit" class="btn btn-primary mb-2">
-                <i class="fas fa-search"></i>
-                </button>   
-            </div>
-        </form>
-    </div>
+
+    <div class="container">
+        <div class="container d-flex align-items-top justify-content-between">
+            <form method="post" class="w-100">
+                {% csrf_token %}
+                <div class="mb-3 d-flex justify-content-between align-items-left">
+                    <a href="{% url 'index' %}" class="btn btn-secondary mb-2 me-3 px-3 py-2 ">
+                        <i class="fas fa-home"></i>
+                    </a>
+                
+                    <input type="text" class="form-control mb-2 flex-grow-2 me-2" id="summoner_name" name="summoner_name" placeholder="Enter summoner name">
+                    <select id="region" name="region" class="form-selec mb-2 me-2 rounded">
+                    {% for code, name in regions %}
+                    <option value="{{ code }}" {% if code == global_region %}selected{% endif %}>{{ name }}</option>
+                    {% endfor %}
+                    </select>
+                
+                    <button type="submit" class="btn btn-primary mb-2 ">
+                    <i class="fas fa-search"></i>
+                    </button>   
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'profile' %}" class="btn btn-primary btn-custom">
+                        <i class="fas fa-person"></i>
+                    </a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-primary btn-custom ">
+                        Log in
+                    </a>
+                {% endif %}
+                </div>
+            </form>
+        </div>
 
     
     <div class="row">
@@ -383,6 +399,7 @@
             </div>
         </div>
     </div>
+
 <!-- Match history! -->
 
 <div class="col">
@@ -570,6 +587,7 @@
         </div>
     {% endfor %}
 </div>
+
 
 
 </div>

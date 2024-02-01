@@ -33,6 +33,7 @@ class FollowedSummoner(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     region = models.CharField(max_length=100)
-
+    solo_rank_info = models.CharField(max_length=50, blank=True, null=True)
+    flex_rank_info = models.CharField(max_length=50, blank=True, null=True)
     def __str__(self):
         return self.name
