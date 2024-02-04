@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <title>Wpisz nazwę gracza</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+
+    <style>
+        .login-button-container {
+            position: absolute;
+            right: 480px;
+            top: 10px;
+        }
+
+        .color-white {
+            color: rgb(0, 0, 0) !important;
+        }
+
+        .padding-left {
+            padding-left: 50px;
+        }
+
+
+        .custom-alert {
+            display: inline-block; 
+            color: #000000;
+            background-color: rgb(248, 215, 218);
+            border-color: #dc3545;
+            padding: .75rem 1.25rem;
+            border-radius: .25rem;
+            margin-top: 50px;
+            }
+
+
+        #navMenu {
+            display: none;
+            width: 24%;
+            height: 100vh;
+            background-color: rgba(40, 38, 43, 0.9); /* Czarne tło z przezroczystością */
+            color: white;
+            position: fixed;
+            top: 0px;
+            left: 0; /* Menu wyświetlane z lewej strony */
+            z-index: 1000;
+            padding: 20px; /* Dodatkowe wcięcie dla treści menu */
+            border-radius: .40rem;
+            border-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center; /* Centruje przycisk w poziomie */
+        
+        }
+        .champion-container {
+            position: relative;
+            display: inline-block; /* Pozwala na wyświetlanie obok siebie */
+            margin: 10px;
+        }
+
+        .champion-name {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.5); /* Półprzezroczyste tło dla lepszego kontrastu */
+            color: white; /* Biały tekst */
+            padding: 2px 5px; /* Mały odstęp wewnątrz */
+            font-size: 12px; /* Mniejsza czcionka dla nazwy */
+            border-radius: 3px; /* Lekko zaokrąglone rogi */
+        }
+        .custom-card {
+            background: rgb(40, 38, 43);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            color: rgb(255, 255, 255);
+            margin-bottom: 15px;
+            margin-top: 15px;
+            width: 69%; /* Ogranicza szerokość karty do 75% szerokości kontenera */
+            margin-left: auto; /* Centruje kartę w poziomie */
+            margin-right: auto;
+        }
+        .champion-list-title {
+            margin-top: 25px;
+            font-weight: bold;
+            font-size: 2.5rem; /* Ekwialent rozmiaru 4 w Bootstrap */
+        }
+
+        .find-champion-text {
+            font-size: 1.5rem; /* Przybliżony ekwialent rozmiaru 12px */
+            margin-top: 1rem; /* Dodaje przestrzeń między linijkami */
+            align-content: center;
+            padding-left: 70px;
+        }
+        .move-button {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            /* margin-left: 100px; */
+        
+        }
+    </style>
+
+
+
+</head>
+<body class="bg-dark text-white">
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-1"> </div>
+        <!-- Lewa strona -->
+        <div class="col text-center padding-left ">
+            
+            <button class="btn btn-primary" type="button" id="menuToggle" style="margin-right: 100px;">
+                <i class="bi bi-list"></i>
+            </button>
+            <!--             
+            {% if user.is_authenticated %}
+                <button class="btn btn-info color-white" type="button" disabled>Welcome, {{ user.username }}!</button>
+            {% endif %} -->
+        </div>
+
+
+        <!-- Prawa strona -->
+        <div class="col text-center ">
+            {% if user.is_authenticated %}
+                <a href="{% url 'logout_confirm' %}" class="btn btn-secondary">Log out</a>
+                <!-- Przycisk z ikoną osoby dla zalogowanych użytkowników -->
+                <a href="{% url 'index' %}" class="btn btn-secondary ">
+                    <i class="fas fa-home"></i>
+                </a>
+                <a href="{% url 'profile' %}" class="btn btn-primary "><i class="fas fa-person"></i></a>
+                
+            {% else %}
+                <a href="{% url 'index' %}" class="btn btn-secondary ">
+                    <i class="fas fa-home"></i>
+                </a>
+                <a href="{% url 'login' %}" class="btn btn-primary ">Log in</a>
+            {% endif %}
+            
+        </div>
+        <div class="col-md-1"> </div>
+    </div>
+</div>
+
+
+<div id="navMenu" style="display: none;">
+    <div class="move-button">
+        {% if user.is_authenticated %}
+            <button class="btn btn-info color-white " type="button" disabled>Welcome, {{ user.username }}!</button>
+        {% endif %}
+    </div>
+    <div>
+        <a href="{% url 'champions' %}" class="btn btn-link d-flex align-items-center " style="margin-top: 20px;">
+            <i class="bi bi-people-fill me-2 fs-3"></i> <i class="margin-left2">Champions</i>   
+        </a>
+    </div>
+    <!--  więcej linków tutaj -->
+</div>
+
+
+
+    <div class="d-flex justify-content-center align-items-center" style="min-height: 90vh;">
+        <div class="champions-list">
+            <div class="d-flex justify-content-center align-items-center">
+                <div>
+                    <p class="champion-list-title">Lol Champions List</p>
+                    <p class="find-champion-text ">Find your champion</p>
+                </div>
+            </div>
+            <div class="custom-card">
+                {% for name, id in champions.items %}
+                    <div class="champion-container">
+                        <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{ id }}.png" alt="Champion Icon" class="img-fluid">
+                        <div class="champion-name">{{ name }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>  
+    </div>
+
+    <script>
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            var menu = document.getElementById('navMenu');
+            if (menu.style.display === 'none') {
+                menu.style.display = 'block';
+            } else {
+                menu.style.display = 'none';
+            }
+        });
+    </script>
+
+
+</body>
+</html>
+
+

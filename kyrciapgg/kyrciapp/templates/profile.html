@@ -2,9 +2,12 @@
 <html>
 <head>
     <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
         <title>Wpisz nazwę gracza</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
     
     <title>Profile</title>
 
@@ -59,7 +62,29 @@
     .no-wrap {
         white-space: nowrap;
     }
-
+    #navMenu {
+            display: none;
+            width: 24%;
+            height: 100vh;
+            background-color: rgba(40, 38, 43, 0.9); /* Czarne tło z przezroczystością */
+            color: white;
+            position: fixed;
+            top: 0px;
+            left: 0; /* Menu wyświetlane z lewej strony */
+            z-index: 1000;
+            padding: 20px; /* Dodatkowe wcięcie dla treści menu */
+            border-radius: .40rem;
+            border-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center; /* Centruje przycisk w poziomie */
+        }
+        .move-button {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            /* margin-left: 100px; */
+        
+        }
 
 </style>
 </head>
@@ -71,9 +96,12 @@
             <div class="col-md-1"> </div>
             <!-- Lewa strona -->
             <div class="col text-center padding-left color-white">
-                {% if user.is_authenticated %}
+                <button class="btn btn-primary" type="button" id="menuToggle" style="margin-right: 100px;">
+                    <i class="bi bi-list"></i>
+                </button>
+                <!-- {% if user.is_authenticated %}
                     <button class="btn btn-info color-white" type="button" disabled>Welcome, {{ user.username }}!</button>
-                {% endif %}
+                {% endif %} -->
             </div>
     
             <!-- Prawa strona -->
@@ -89,6 +117,21 @@
             <div class="col-md-1"> </div>
         </div>
     </div>
+
+    <div id="navMenu" style="display: none;">
+        <div class="move-button">
+            {% if user.is_authenticated %}
+                <button class="btn btn-info color-white " type="button" disabled>Welcome, {{ user.username }}!</button>
+            {% endif %}
+        </div>
+        <div>
+            <a href="{% url 'champions' %}" class="btn btn-link d-flex align-items-center " style="margin-top: 20px;">
+                <i class="bi bi-people-fill me-2 fs-3"></i> <i class="margin-left2">Champions</i>   
+            </a>
+        </div>
+        <!--  więcej linków tutaj -->
+    </div>
+
 
 <!-- Formularz do dodawania obserwowanych graczy -->
 <div class="d-flex justify-content-center align-items-center" style="min-height: 15vh;">
@@ -136,7 +179,7 @@
                             {% if summoner.solo_rank_info %}
                                 <span>Solo/Duo:</span>
                                 <img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/{{ summoner.solo_rank_info.Tier|lower }}.png" alt="Tier Icon" class="small-tier-icon">
-                                <span>{{ summoner.solo_rank_info.Rank }} - {{ summoner.solo_rank_info.League_Points }}LP - Win Rate: {{ summoner.solo_rank_info.Win_Percentage }}%</span>
+                                <span>{{ summoner.solo_rank_info.Rank }} - {{ summoner.solo_rank_info.League_Points }}LP - Win Rate: {{ summoner.solo_rank_info.Win_Percentage }}</span>
                             {% else %}
                                 <span>Solo/Duo: Unranked</span>
                             {% endif %}
@@ -147,7 +190,7 @@
                             {% if summoner.flex_rank_info %}
                                 <span>Flex:</span>
                                 <img src="https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/{{ summoner.flex_rank_info.Tier|lower }}.png" alt="Tier Icon" class="small-tier-icon">
-                                <span>{{ summoner.flex_rank_info.Rank }} - {{ summoner.flex_rank_info.League_Points }}LP - Win Rate: {{ summoner.flex_rank_info.Win_Percentage }}%</span>
+                                <span>{{ summoner.flex_rank_info.Rank }} - {{ summoner.flex_rank_info.League_Points }}LP - Win Rate: {{ summoner.flex_rank_info.Win_Percentage }}</span>
                             {% else %}
                                 <span>Flex: Unranked</span>
                             {% endif %}
@@ -164,6 +207,16 @@
         </ul>
     </div>
 </div>
+    <script>
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            var menu = document.getElementById('navMenu');
+            if (menu.style.display === 'none') {
+                menu.style.display = 'block';
+            } else {
+                menu.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>
 

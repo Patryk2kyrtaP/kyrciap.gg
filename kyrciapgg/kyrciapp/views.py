@@ -1,7 +1,7 @@
 from cgitb import text
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
-from django.http import Http404, HttpResponse
+from django.http import Http404
 
 from .models import FollowedSummoner
 from django.contrib import messages
@@ -14,12 +14,15 @@ from django.contrib.auth.views import LoginView
 from django.http import HttpResponseRedirect
 from django.views.decorators.http import require_POST
 from django.http import JsonResponse
+from django.core.mail import send_mail
+from django.http import HttpResponse
+from django.conf import settings
 
-from kyrciapp.python.champion_dictionary import champ_dictionary_by_name
+from kyrciapp.python.champion_dictionary import champ_dictionary_by_name, champ_dictionary_by_name2
 from kyrciapp.python.player_profile_info import check_summoner_exists, get_maestry_points, get_rank_info, get_summoner_info
 from kyrciapp.python.region_dictionary import choose_region
 from kyrciapp.python.match_info import get_general_match_info_by_id, get_match_id, get_match_info_by_id, loop_through_matches, player_to_loop, process_looped_info
-from kyrciapp.python.champion_dictionary import champ_dictionary
+
 from icecream import ic
 import logging
 
@@ -328,125 +331,6 @@ def render_loop_info(request):
     return processed_looped_info
 
 
-# ================================================================================================
-def signup_view(request):
-    regions = choose_region()
-    
-    
-    if request.method == 'POST':
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('index') 
-    else:
-        form = SignUpForm()
-
-    return render(request, 'signup.html', {'form': form, 'regions': regions})
-
-
-
-def login_view(request):
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-
-        if user is not None:
-            login(request, user)
-            return redirect('index')
-        else:
-            return render(request, 'login.html', {'error_message': 'Incorrect username or password'})
-
-    return render(request, 'login.html')
-
-# =====================================================================================================
-
-def follow_summoner_view(request):
-
-    if request.method == 'POST':
-        summoner_name = request.POST.get('summoner_name')
-        region = request.POST.get('region')
-
-        if check_summoner_exists(summoner_name, region) == True:
-        # Utworzenie nowego obiektu FollowedSummoner i zapisanie go
-            if FollowedSummoner.objects.filter(user=request.user, name=summoner_name, region=region).exists():
-                message = f"Player {summoner_name} is already followed."
-                followed_summoners = FollowedSummoner.objects.filter(user=request.user)
-                regions = choose_region()
-                context = {
-                    'error_message': message,
-                    'regions': regions,
-                    'followed_summoners': followed_summoners,
-                }
-                return render(request, 'profile.html', context)
-
-            # Gracz nie jest jeszcze obserwowany, więc dodajemy go
-            followed_summoner = FollowedSummoner(user=request.user, name=summoner_name, region=region)
-            followed_summoner.save()
-
-        else:          
-            messages.error(request, f"Summoner {summoner_name} does not exist in region {region}.")
-        
-        return redirect('profile')
-
-    return render(request, 'index.html')
-
-def unfollow_summoner_view(request, summoner_id):
-    summoner = get_object_or_404(FollowedSummoner, id=summoner_id, user=request.user)
-    summoner.delete()
-    return redirect('profile')
-
-def profile_view(request):
-    regions = choose_region()
-    followed_summoners = FollowedSummoner.objects.filter(user=request.user)
-    
-    
-    
-    for summoner in followed_summoners:
-        summoner_info = get_summoner_info(summoner.name, summoner.region)
-        if summoner_info:
-            # name_region = summoner.name + summoner.region
-            # # ic(name_region)
-            # length = len(name_region)
-            # # ic(length)
-            # set_length = 20
-            # length_dif = set_length - length
-            # # ic(length_dif)
-            # summoner.spaces = "a" * length_dif
-            # ic(summoner.spaces)
-            request.session['id'] = summoner_info[4]
-            request.session['global_region'] = summoner.region
-            solo_rank_info, flex_rank_info = rank_info_render(request)
-            # ic(solo_rank_info)
-            # ic(flex_rank_info)
-    #         # Dodanie informacji o randze do obiektu summoner
-            summoner.solo_rank_info = solo_rank_info if solo_rank_info else {}
-            summoner.flex_rank_info = flex_rank_info if flex_rank_info else {}
-    
-    
-
-
-    context = {    
-        'regions': regions,
-        'followed_summoners': followed_summoners
-    }
-    return render(request, 'profile.html', context)
-# =====================================================================================================
-
-def logout_view(request):
-    logout(request)
-    return redirect('index')
-
-def logout_confirm_view(request):
-    # Strona potwierdzenia wylogowania
-    return render(request, 'logout_confirm.html')
-
-@require_POST
-def confirm_logout(request):
-    # Wylogowanie użytkownika
-    logout(request)
-    return HttpResponseRedirect('/')
 
 # =====================================================================================================
 def player_info_view(request, summoner_name, region):
@@ -590,3 +474,152 @@ def player_info_view(request, summoner_name, region):
         'global_region': region
     })
 
+# =====================================================================================================
+
+
+def signup_view(request):
+    regions = choose_region()
+    
+    
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('index') 
+    else:
+        form = SignUpForm()
+
+    return render(request, 'signup.html', {'form': form, 'regions': regions})
+
+
+
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect('index')
+        else:
+            return render(request, 'login.html', {'error_message': 'Incorrect username or password'})
+
+    return render(request, 'login.html')
+
+# =====================================================================================================
+
+def follow_summoner_view(request):
+
+    if request.method == 'POST':
+        summoner_name = request.POST.get('summoner_name')
+        region = request.POST.get('region')
+
+        if check_summoner_exists(summoner_name, region) == True:
+        # Utworzenie nowego obiektu FollowedSummoner i zapisanie go
+            if FollowedSummoner.objects.filter(user=request.user, name=summoner_name, region=region).exists():
+                message = f"Player {summoner_name} is already followed."
+                followed_summoners = FollowedSummoner.objects.filter(user=request.user)
+                regions = choose_region()
+                context = {
+                    'error_message': message,
+                    'regions': regions,
+                    'followed_summoners': followed_summoners,
+                }
+                return render(request, 'profile.html', context)
+
+            # Gracz nie jest jeszcze obserwowany, więc dodajemy go
+            followed_summoner = FollowedSummoner(user=request.user, name=summoner_name, region=region)
+            followed_summoner.save()
+
+        else:          
+            messages.error(request, f"Summoner {summoner_name} does not exist in region {region}.")
+        
+        return redirect('profile')
+
+    return render(request, 'index.html')
+
+def unfollow_summoner_view(request, summoner_id):
+    summoner = get_object_or_404(FollowedSummoner, id=summoner_id, user=request.user)
+    summoner.delete()
+    return redirect('profile')
+
+def profile_view(request):
+    regions = choose_region()
+    followed_summoners = FollowedSummoner.objects.filter(user=request.user)
+    
+    
+    
+    for summoner in followed_summoners:
+        summoner_info = get_summoner_info(summoner.name, summoner.region)
+        if summoner_info:
+            # name_region = summoner.name + summoner.region
+            # # ic(name_region)
+            # length = len(name_region)
+            # # ic(length)
+            # set_length = 20
+            # length_dif = set_length - length
+            # # ic(length_dif)
+            # summoner.spaces = "a" * length_dif
+            # ic(summoner.spaces)
+            request.session['id'] = summoner_info[4]
+            request.session['global_region'] = summoner.region
+            solo_rank_info, flex_rank_info = rank_info_render(request)
+            # ic(solo_rank_info)
+            # ic(flex_rank_info)
+    #         # Dodanie informacji o randze do obiektu summoner
+            summoner.solo_rank_info = solo_rank_info if solo_rank_info else {}
+            summoner.flex_rank_info = flex_rank_info if flex_rank_info else {}
+    
+    
+
+
+    context = {    
+        'regions': regions,
+        'followed_summoners': followed_summoners
+    }
+    return render(request, 'profile.html', context)
+# =====================================================================================================
+
+def logout_view(request):
+    logout(request)
+    return redirect('index')
+
+def logout_confirm_view(request):
+    # Strona potwierdzenia wylogowania
+    return render(request, 'logout_confirm.html')
+
+@require_POST
+def confirm_logout(request):
+    # Wylogowanie użytkownika
+    logout(request)
+    return HttpResponseRedirect('/')
+
+def champions_view(request):
+    champions_dict = champ_dictionary_by_name2()  # Wywołanie funkcji, aby uzyskać słownik
+    context = {
+        'champions': champions_dict
+    }
+    ic(context)
+    return render(request, 'champions.html', context)
+
+def contact_view(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        subject = request.POST.get('subject')
+        message = request.POST.get('message')
+
+        full_message = f"Received message below from {name}, {email}\n\n{message}"
+
+        send_mail(
+            subject,
+            full_message,
+            settings.EMAIL_HOST_USER,
+            ['kyrciap.gg@gmail.com'],
+            fail_silently=False,
+        )
+        return HttpResponse('Message sent successfully')
+    else:
+        return render(request, 'contact.html')

@@ -2,6 +2,8 @@
 <!DOCTYPE html>                         
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
@@ -19,23 +21,17 @@
         width: 25%;  /* Zmniejszenie szerokości obrazu do 50% szerokości rodzica */
         height: auto; /* Zachowanie proporcji obrazu */
     }
-</style>
 
-<style>
     .small-tier-icon {
         width: 65%;  /* Zmniejszenie szerokości obrazu do 50% szerokości rodzica */
         height: auto; /* Zachowanie proporcji obrazu */
     }
-</style>
 
-<style>
     .tiny-champ-icon {
         width: 10%;  /* Zmniejszenie szerokości obrazu do 50% szerokości rodzica */
         height: auto; /* Zachowanie proporcji obrazu */
     }
-</style>
 
-<style>
     .custom-card {
         background: rgb(40, 38, 43);
         border-radius: 10px; /* Zaokrąglenie rogów ramki */
@@ -43,24 +39,20 @@
         color:rgb(255, 255, 255);
         margin-bottom: 15px;
     }
-</style>
 
-<style>
     .separator-border {
         border-bottom: 20px solid rgb(33, 36, 40); /* Cienka linia*/
         padding-top: 10px;
         padding-bottom: 10px;
 
     }
-</style>
 
-<style>
     .left-padding {
 
         font: bold;
         font-size: 20px;
     }
-</style>
+
 
 <style>
     .game-container {
@@ -189,6 +181,30 @@
     border-radius: 50%;
     padding: 2px;
 }
+    #navMenu {
+        display: none;
+        width: 16%;
+        height: 100vh;
+        background-color: rgba(40, 38, 43, 0.9); /* Czarne tło z przezroczystością */
+        color: white;
+        position: fixed;
+        top: 0px;
+        left: 0; /* Menu wyświetlane z lewej strony */
+        z-index: 1000;
+        padding: 20px; /* Dodatkowe wcięcie dla treści menu */
+        border-radius: .40rem;
+        border-color: rgba(0, 0, 0, 0.9);
+        display: flex;
+        justify-content: center; /* Centruje przycisk w poziomie */
+        }   
+
+    .move-button {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        /* margin-left: 100px; */
+        }
+
 </style>
 
 <body class="bg-dark text-white d-flex justify-content-center align-items-top" style="min-height: 100vh;">
@@ -198,6 +214,11 @@
             <form method="post" class="w-100">
                 {% csrf_token %}
                 <div class="mb-3 d-flex justify-content-between align-items-left">
+                    
+                    <button class="btn btn-primary mb-2 me-3 px-3 py-2 " type="button" id="menuToggle" >
+                        <i class="bi bi-list"></i>
+                    </button>
+
                     <a href="{% url 'index' %}" class="btn btn-secondary mb-2 me-3 px-3 py-2 ">
                         <i class="fas fa-home"></i>
                     </a>
@@ -223,6 +244,21 @@
                 {% endif %}
                 </div>
             </form>
+        </div>
+
+
+        <div id="navMenu" style="display: none;">
+            <div class="move-button">
+                {% if user.is_authenticated %}
+                    <button class="btn btn-info color-white " type="button" disabled>Welcome, {{ user.username }}!</button>
+                {% endif %}
+            </div>
+            <div>
+                <a href="{% url 'champions' %}" class="btn btn-link d-flex align-items-center " style="margin-top: 20px;">
+                    <i class="bi bi-people-fill me-2 fs-3"></i> <i class="margin-left2">Champions</i>   
+                </a>
+            </div>
+            <!--  więcej linków tutaj -->
         </div>
 
     
@@ -591,6 +627,16 @@
 
 
 </div>
+<script>
+    document.getElementById('menuToggle').addEventListener('click', function() {
+        var menu = document.getElementById('navMenu');
+        if (menu.style.display === 'none') {
+            menu.style.display = 'block';
+        } else {
+            menu.style.display = 'none';
+        }
+    });
+</script>
 
 
 </body>
