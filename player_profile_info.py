@@ -3,8 +3,9 @@ import datetime
 from datetime import datetime
 from icecream import ic
 from champion_dictionary import champ_dictionary
-from kyrciapgg.kyrciapp.python.config import get_api_key, setup_cassiopeia
+# from kyrciapgg.kyrciapp.python.config import get_api_key, setup_cassiopeia
 import cassiopeia as cass
+from config import get_api_key
 
 from region_dictionary import global_region_dictionary
 
@@ -197,3 +198,13 @@ def get_game_name_by_puuid(puuid, global_region):
 # ic(zmienna1)
  
 # get_rank_info('WyXgGXr6PcSG9OxTx1l3dTjCoNpBU1TiWMQhb3XEu2GjxrmCFxycuQUa4A')
+
+# def check_summoner_exists(summoner_name, region):
+#     api_key  = get_api_key()
+#     url = f"https://{region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/{summoner_name}"
+
+#     response = requests.get(url, headers={"X-Riot-Token": api_key})
+#     return response.status_code == 200
+
+# aaa = check_summoner_exists('Vugen', 'BR')
+# ic(aaa)

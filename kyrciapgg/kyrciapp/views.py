@@ -26,7 +26,10 @@ from kyrciapp.python.match_info import get_general_match_info_by_id, get_match_i
 from icecream import ic
 import logging
 
-
+from email.message import EmailMessage
+import ssl
+from smtplib import SMTP_SSL, SMTPAuthenticationError, SMTPException, SMTPServerDisconnected
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -605,21 +608,38 @@ def champions_view(request):
     return render(request, 'champions.html', context)
 
 def contact_view(request):
+
+    email_sender = 'kyrciap.gg@gmail.com'
+    email_password = os.environ.get('EMAIL_PASSWORD') 
+    ic(email_password)
+    email_reciver = 'kyrciap.gg@gmail.com'
+
     if request.method == 'POST':
         name = request.POST.get('name')
         email = request.POST.get('email')
         subject = request.POST.get('subject')
         message = request.POST.get('message')
 
-        full_message = f"Received message below from {name}, {email}\n\n{message}"
+        try:
+            em = EmailMessage()
+            em['From'] = email_sender
+            em['To'] = email_reciver
+            em['Subject'] = subject
 
-        send_mail(
-            subject,
-            full_message,
-            settings.EMAIL_HOST_USER,
-            ['kyrciap.gg@gmail.com'],
-            fail_silently=False,
-        )
-        return HttpResponse('Message sent successfully')
+            context = ssl.create_default_context()
+
+            full_message = f"Received message below from {name}, \n\n Email: {email}, \n\n {message}"
+            em.set_content(full_message)
+            
+            
+            with SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
+                smtp.login(email_sender, email_password)
+                smtp.sendmail(email_sender, email_reciver, em.as_string())         # Użyj send_message zamiast sendmail i em.as_string()
+            messages.success(request, "Message sent successfully")
+        except Exception as e:
+            messages.error(request, "There was a problem while sending your message, try again later")
+            ic(e)
+            
+        return redirect('contact') 
     else:
         return render(request, 'contact.html')

@@ -145,19 +145,24 @@
 </div>
 
 
-<div id="navMenu" style="display: none;">
-    <div class="move-button">
-        {% if user.is_authenticated %}
-            <button class="btn btn-info color-white " type="button" disabled>Welcome, {{ user.username }}!</button>
-        {% endif %}
+    <div id="navMenu" style="display: none;">
+        <div class="move-button">
+            {% if user.is_authenticated %}
+                <button class="btn btn-info color-white " type="button" disabled>Welcome, {{ user.username }}!</button>
+            {% endif %}
+        </div>
+        <div>
+            <a href="{% url 'champions' %}" class="btn btn-link d-flex align-items-center " style="margin-top: 20px;">
+                <i class="bi bi-people-fill me-2 fs-3"></i> <i class="margin-left2">Champions</i>   
+            </a>
+        </div>
+        <div>    
+            <a href="{% url 'contact' %}" class="btn btn-link d-flex align-items-center "  style="margin-top: 10px;">
+                <i class="bi bi-envelope-paper-fill me-2 fs-3"></i> <i class="margin-left2">Contact us</i>   
+            </a>
+        </div>
     </div>
-    <div>
-        <a href="{% url 'champions' %}" class="btn btn-link d-flex align-items-center " style="margin-top: 20px;">
-            <i class="bi bi-people-fill me-2 fs-3"></i> <i class="margin-left2">Champions</i>   
-        </a>
-    </div>
-    <!--  więcej linków tutaj -->
-</div>
+
 
 
 
