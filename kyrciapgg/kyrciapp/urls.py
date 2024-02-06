@@ -38,6 +38,6 @@ urlpatterns = [
     path('player_info/<str:summoner_name>/<str:region>/', views.player_info_view, name='player_info_with_args'),
     path('champions/', views.champions_view, name='champions'),
     path('contact/', views.contact_view, name='contact'),
-    
+    path('match/<str:match_ids>/', views.detailed_match_info_view, name='detailed_match_info'),
 ]
 

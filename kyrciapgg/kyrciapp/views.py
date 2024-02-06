@@ -97,6 +97,7 @@ def player_info(request):
                                 'name': player['summoner_name'] if player['summoner_name'] else 'Bambik',
                                 'champion_icon_url': f"https://raw.communitydragon.org/latest/game/assets/characters/{player['champion_name'].lower()}/hud/{player['champion_name'].lower()}_circle_1.png",
                                 'champion_name': player['champion_name']
+                                
                             }
 
                             if index < 5:
@@ -114,11 +115,28 @@ def player_info(request):
                 my_player = []
                 for i in range(0, len(match_detailed_infos), 10):
                     match_players = match_detailed_infos[i:i+10]
+
+                    champion_name = None
+                    champion_lvl = None
+                    summoner1Id = None
+                    summoner2Id = None
+                    kills = None
+                    deaths = None
+                    assists = None
+                    kda_ratio = None
+                    total_minions_killed = None
+                    minions_killed_min = None
+                    vision_score = None
+                    win = None
+                    items_in_match = None
+
+                    # ic(match_players)
                     if len(match_players) == 10:
-                        player_1 = []
                         for player in match_players[:10]:
                             if player['summoner_name'] == summoner_name:
-                                champion_name = champ_dictionary_by_name(player['champion_name'])
+                                ic(player['champion_name'])
+                                champion_name =     champ_dictionary_by_name(player['champion_name'])
+                                ic(champion_name)
                                 champion_lvl = player['champ_level']
                                 summoner1Id = player['summoner1Id']
                                 summoner2Id = player['summoner2Id']
@@ -239,7 +257,7 @@ def render_match_id(request):
     puuid = request.session['puuid']
     global_region = request.session['global_region']  
     
-    match_ids = get_match_id(puuid, global_region, 3) #LICZBA GIER DO ZMIANY
+    match_ids = get_match_id(puuid, global_region, 2) #LICZBA GIER DO ZMIANY
     request.session['match_ids'] = match_ids 
     # ic(request.session['match_ids'])
     
@@ -251,11 +269,12 @@ def render_match_id(request):
 def render_get_general_match_info_by_id(request):
     global_region = request.session['global_region']  
     match_ids = request.session['match_ids']
-    ic(match_ids)
+    # ic(match_ids)
     
     i = 0
     rendered_match_info = []
     for match_id in match_ids:
+        
         match_info = get_general_match_info_by_id(match_id, global_region)
         if match_info:
             i = i + 1
@@ -267,7 +286,8 @@ def render_get_general_match_info_by_id(request):
                 'game_version': match_info[3],
                 'platform_Id': match_info[4],
                 'when_form_today': match_info[5],
-                'queue_name': match_info[6]
+                'queue_name': match_info[6],
+                'get_id': match_id,
             })
 
     ic(rendered_match_info)    
@@ -281,8 +301,10 @@ def render_get_match_info_by_id(request):
     i = 0
     rendered_match_details = []
     for match_id in match_ids:
+        # ic(match_id)
         match_details = get_match_info_by_id(match_id, global_region)
         i = i + 1
+        # ic(match_details)
         if match_details:
             for player_detail in match_details:
                 rendered_match_details.append({
@@ -309,8 +331,10 @@ def render_get_match_info_by_id(request):
                     'gold_earned': player_detail[19],
                     'first_Blood_Kill': player_detail[20],
                     'items_in_match': player_detail[21],
+                    
                     # Dodaj pozostałe pola w podobny sposób
                     'runes': player_detail[-1]  # Zakładając, że runy są ostatnim elementem w player_detail
+                    
                 })
 
     return rendered_match_details
@@ -643,3 +667,61 @@ def contact_view(request):
         return redirect('contact') 
     else:
         return render(request, 'contact.html')
+    
+def detailed_match_info_view(request, match_ids):
+
+    if request.method == 'POST':
+        form = SummonerForm(request.POST)
+        if form.is_valid():
+            request.session['summoner_name'] = form.cleaned_data['summoner_name']
+            request.session['global_region'] = form.cleaned_data['region']
+            return redirect('player_info')
+
+    # ic(match_ids)
+    regions = choose_region()
+    
+    
+    
+    global_region = request.session.get('global_region')
+    ic(global_region)
+    match_details = get_match_info_by_id(match_ids, global_region)
+    # ic(match_details)
+    rendered_match_details = []
+    if match_details:
+        i = 1  # Zakładamy, że mamy do czynienia z jednym meczem, więc indeks i jest stały
+        for player_detail in match_details:
+            champion_id = champ_dictionary_by_name(player_detail[1])
+            ic(champion_id)
+            rendered_match_details.append({
+                'match_ids': match_ids,
+                'summoner_name': player_detail[0],
+                'champion_name': champion_id,       #player_detail[1],
+                'champ_level': player_detail[2],
+                'kills': player_detail[3],
+                'deaths': player_detail[4],
+                'assists': player_detail[5],
+                'kda_ratio': player_detail[6],
+                'total_minions_killed': player_detail[7],
+                'minions_killed_min': player_detail[8],
+                'vision_score': player_detail[9],
+                'role': player_detail[10],
+                'lane': player_detail[11],
+                'summoner1Id': player_detail[12],
+                'summoner2Id': player_detail[13],
+                'longest_time_spent_living': player_detail[14],
+                'win': player_detail[15],
+                'largest_multi_kill': player_detail[16],
+                'penta_kills': player_detail[17],
+                'total_damage_dealt': player_detail[18],
+                'gold_earned': player_detail[19],
+                'first_Blood_Kill': player_detail[20],
+                'items_in_match': player_detail[21],
+                    # Dodaj pozostałe pola w podobny sposób
+                'runes': player_detail[-1]  # Zakładając, że runy są ostatnim elementem w player_detail
+            })
+        
+    context = {
+        'detailed_match_info': rendered_match_details,
+        'regions': regions
+    }
+    return render(request, 'detailed_match_info.html', context)

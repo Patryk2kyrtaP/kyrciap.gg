@@ -12,36 +12,36 @@
 
 <style>
      .btn-custom {
-        height: 42px; /* Wysokość dopasowana do wysokości pola wyszukiwania */
-        white-space: nowrap; /* Zapobiega przenoszeniu tekstu do nowej linii */
+        height: 42px; 
+        white-space: nowrap;
         margin-left: 8px;
     }
 
     .small-profile-icon {
-        width: 25%;  /* Zmniejszenie szerokości obrazu do 50% szerokości rodzica */
-        height: auto; /* Zachowanie proporcji obrazu */
+        width: 25%;  
+        height: auto; 
     }
 
     .small-tier-icon {
-        width: 65%;  /* Zmniejszenie szerokości obrazu do 50% szerokości rodzica */
-        height: auto; /* Zachowanie proporcji obrazu */
+        width: 65%;  
+        height: auto; 
     }
 
     .tiny-champ-icon {
-        width: 10%;  /* Zmniejszenie szerokości obrazu do 50% szerokości rodzica */
-        height: auto; /* Zachowanie proporcji obrazu */
+        width: 10%;  
+        height: auto; 
     }
 
     .custom-card {
         background: rgb(40, 38, 43);
-        border-radius: 10px; /* Zaokrąglenie rogów ramki */
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Cień ramki dla lepszego efektu */
+        border-radius: 10px; 
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
         color:rgb(255, 255, 255);
         margin-bottom: 15px;
     }
 
     .separator-border {
-        border-bottom: 20px solid rgb(33, 36, 40); /* Cienka linia*/
+        border-bottom: 20px solid rgb(33, 36, 40); 
         padding-top: 10px;
         padding-bottom: 10px;
 
@@ -70,18 +70,18 @@
     padding-bottom: 30px;
     padding-right: 35px;
     padding-top: 30px;
-    /* color: red; Lub inny kolor dla WIN */
+    
 }
 
 .game-result p:nth-child(2) {
-    color: green; /* Lub inny kolor dla LOSS */
+    color: green; 
 }
 
 
 .champion-container {
     position: relative;
     align-items: center;
-    /* padding-left: 20px; */
+   
 }
 
 .champion-icon {
@@ -93,7 +93,7 @@
     position: absolute;
     bottom: 0;
     left: 0;
-    background: rgba(0, 0, 0, 0.5); /* Półprzezroczyste tło dla lepszej czytelności */
+    background: rgba(0, 0, 0, 0.5); 
     color: white;
     padding: 2px;
 }
@@ -101,32 +101,32 @@
 .summoner-spells img {
     width: 35px;
     height: 35px;
-    display: block; /* Ustawia obrazy jeden pod drugim */
+    display: block; 
     align-items: center;
 }
 
 .win-background {
-    background-color: rgba(0, 128, 0, 0.15); /* Zielone, prześwitujące tło dla wygranych gier */
-    border-radius: 10px; /* Zaokrąglone rogi */
+    background-color: rgba(0, 128, 0, 0.15); 
+    border-radius: 10px; 
 }
 
 .loss-background {
-    background-color: rgba(255, 0, 0, 0.15); /* Czerwone, prześwitujące tło dla przegranych gier */
-    border-radius: 10px; /* Zaokrąglone rogi */
+    background-color: rgba(255, 0, 0, 0.15); 
+    border-radius: 10px; 
 }
 
 .queue-name {
-    font-weight: bold; /* Pogrubienie tekstu */
-    font-size: larger; /* Większa czcionka */
-    text-align: center; /* Wyśrodkowanie tekstu */
+    font-weight: bold; 
+    font-size: larger; 
+    text-align: center; 
 }
 
 .center-text {
-    text-align: center; /* Wyśrodkowanie tekstu */
+    text-align: center; 
 }
 
 .date-time-info {
-    margin-top: 20px; /* Odległość od poprzedniego elementu */
+    margin-top: 20px; 
 }
 
 .items-container {
@@ -136,7 +136,7 @@
 
 .item-row {
     display: flex;
-    margin-bottom: 5px; /* Odstęp między rzędami */
+    margin-bottom: 5px; 
 }
 
 .item-row:last-child {
@@ -144,9 +144,9 @@
 }
 
 .item-icon {
-    width: 35px; /* Szerokość ikony */
-    height: 35px; /* Wysokość ikony */
-    margin-right: 5px; /* Odstęp między ikonami */
+    width: 35px; 
+    height: 35px; 
+    margin-right: 5px; 
 }
 
 .last-item {
@@ -155,16 +155,16 @@
 }
 
 .champion-container2 {
-    display: flex; /* Użyj flexboxa do wyrównania elementów w rzędzie */
-    justify-content: center; /* Wyśrodkuj ikony w poziomie */
-    gap: 10px; /* Dodaj odstęp między ikonami */
+    display: flex; 
+    justify-content: center; 
+    gap: 10px;
 }
 
 .champion-icon-container2 {
     position: relative;
-    display: flex; /* Użyj flexboxa do umieszczenia tekstu na ikonie */
-    justify-content: center; /* Wyśrodkuj tekst na ikonie */
-    align-items: center; /* Wyśrodkuj tekst na ikonie w pionie */
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
 }
 
 .champion-level-on-icon2 {
@@ -183,24 +183,24 @@
         display: none;
         width: 16%;
         height: 100vh;
-        background-color: rgba(40, 38, 43, 0.9); /* Czarne tło z przezroczystością */
+        background-color: rgba(40, 38, 43, 0.9); 
         color: white;
         position: fixed;
         top: 0px;
-        left: 0; /* Menu wyświetlane z lewej strony */
+        left: 0; 
         z-index: 1000;
-        padding: 20px; /* Dodatkowe wcięcie dla treści menu */
+        padding: 20px; 
         border-radius: .40rem;
         border-color: rgba(0, 0, 0, 0.9);
         display: flex;
-        justify-content: center; /* Centruje przycisk w poziomie */
+        justify-content: center; 
         }   
 
     .move-button {
         display: flex;
         flex-direction: column;
         justify-content: center;
-        /* margin-left: 100px; */
+       
         }
 
     .margin-style{
@@ -453,6 +453,7 @@
             <div class="card-body {% for game in my_player %}{% if game.match_id == match.match_id %}{% if game.win %}win-background{% else %}loss-background{% endif %}{% endif %}{% endfor %}">
                 <table>
                     <tbody>
+                        
                         <tr>
                             <td style="width: 15%;">
                                 <p class="queue-name">{{ match.queue_name }}</p> <!-- Stylizacja nazwy kolejki -->
@@ -470,7 +471,12 @@
                                 <div class="date-time-info center-text"> <!-- Stylizacja informacji o czasie -->
                                     <p>Time: {{ match.game_duration }}</p>
                                     <p>{{ match.game_version }}</p>
+                                    
+                                    <div class="card-footer">
+                                        <a href="{% url 'detailed_match_info' match_ids=match.get_id %}" class="btn btn-primary"><i class="bi bi-three-dots"></i></a>
+                                    </div>
                                 </div>
+
                             </td>
                             <td style="width: 15%;">
                                 {% for game in my_player %}
@@ -481,11 +487,13 @@
                                         <div class="champion-container">
                                             <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{ game.champion_name }}.png" alt="{{ game.champion_name }}" class="img-fluid champion-icon">
                                             <div class="champion-level">{{ game.champion_lvl }}</div>
+                                            
                                         </div>
                                         
                                         <div class="summoner-spells">
                                             <img src="{% static 'images/' %}{{ game.summoner1Id }}.png" alt="{{ game.summoner1Id }}" class="img-fluid">
                                             <img src="{% static 'images/' %}{{ game.summoner2Id }}.png" alt="{{ game.summoner2Id }}" class="img-fluid">
+
                                         </div>
                                     </div>
                                     <!-- <div class="game-result">
@@ -544,16 +552,23 @@
                                                         <img src="https://raw.communitydragon.org/latest/game/assets/characters/jax/hud/jax_circle_0.jaxupdate.png" alt="{{ player_2 }}" class="img-fluid " style="width: 25px; height: 25px;">
                                                         <span>{{ summoner.name }}</span>
                                                     
+                                                {% else %}
+
+                                                    {% if summoner.champion_name == 'Smolder' %}                                                        
+                                                            <img src="https://raw.communitydragon.org/latest/game/assets/characters/smolder/hud/smolder_circle_0.smolder.png" alt="{{ player_2 }}" class="img-fluid " style="width: 25px; height: 25px;">
+                                                            <span>{{ summoner.name }}</span>                                                                                             
                                                     {% else %}
-                                                    {% if summoner.champion_name == 'Hwei' %} 
+
+                                                        {% if summoner.champion_name == 'Hwei' %} 
                                                     
                                                         <img src="https://raw.communitydragon.org/latest/game/assets/characters/hwei/hud/hwei_circle_0.png" alt="{{ player_2 }}" class="img-fluid " style="width: 25px; height: 25px;">
                                                         <span>{{ summoner.name }}</span>
                                                     
-                                                    {% else %}
+                                                        {% else %}
                                                         <img src="{{ summoner.champion_icon_url }}" alt="{{ summoner.champion_name }}" class="img-fluid" style="width: 25px; height: 25px;">
                                                         <span>{{ summoner.name }}</span>
-                                                {% endif %} 
+                                                        {% endif %} 
+                                                    {% endif %}
                                                 {% endif %}
                                             </div>
                                         {% endif %}
@@ -571,16 +586,25 @@
                                                         <img src="https://raw.communitydragon.org/latest/game/assets/characters/jax/hud/jax_circle_0.jaxupdate.png" alt="{{ player_2 }}" class="img-fluid " style="width: 25px; height: 25px;">
                                                         <span>{{ summoner.name }}</span>
                                                     
+                                                {% else %}
+                                                
+                                                    {% if summoner.champion_name == 'Smolder' %} 
+                                                        
+                                                        <img src="https://raw.communitydragon.org/latest/game/assets/characters/smolder/hud/smolder_circle_0.smolder.png" alt="{{ player_2 }}" class="img-fluid " style="width: 25px; height: 25px;">
+                                                        <span>{{ summoner.name }}</span>
+                                                    
                                                     {% else %}
-                                                    {% if summoner.champion_name == 'Hwei' %} 
+
+                                                        {% if summoner.champion_name == 'Hwei' %} 
                                                     
                                                         <img src="https://raw.communitydragon.org/latest/game/assets/characters/hwei/hud/hwei_circle_0.png" alt="{{ player_2 }}" class="img-fluid " style="width: 25px; height: 25px;">
                                                         <span>{{ summoner.name }}</span>
                                                     
-                                                    {% else %}
+                                                        {% else %}
                                                         <img src="{{ summoner.champion_icon_url }}" alt="{{ summoner.champion_name }}" class="img-fluid" style="width: 25px; height: 25px;">
                                                         <span>{{ summoner.name }}</span>
-                                                {% endif %} 
+                                                        {% endif %} 
+                                                    {% endif %}
                                                 {% endif %}
                                             </div>
                                         {% endif %}

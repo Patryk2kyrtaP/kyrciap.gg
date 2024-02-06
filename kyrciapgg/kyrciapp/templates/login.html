@@ -14,8 +14,8 @@
         <form method="post" action="{% url 'login' %}" >
             {% csrf_token %}
 
-            <br> <!-- Empty line 1 -->
-            <br> <!-- Empty line 2 -->
+            <br> <!-- 1 -->
+            <br> <!-- 2 -->
             <div >
                 <p  class="text-center" style="font-weight: bold; font-size: xx-large;">
                     Log in
@@ -24,8 +24,8 @@
             </div>
 
 
-            <br> <!-- Empty line 3 -->
-            <br> <!-- Empty line 4 -->
+            <br> <!-- 3 -->
+            <br> <!-- 4 -->
 
             <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
@@ -42,16 +42,16 @@
                 </a>
                 
             </div>
-            <br> <!-- Empty line 1 -->
+            <br> <!-- 1 -->
             {% if error_message %}
                 <div class="alert alert-danger text-center">
                     {{ error_message }}
                 </div>
             {% endif %}
-            <br> <!-- Empty line 2 -->
-            <br> <!-- Empty line 3 -->
+            <br> <!--  2 -->
+            <br> <!-- 3 -->
 
-            <br> <!-- Empty line 4 -->
+            <br> <!-- 4 -->
             
             <div class="mb-1">
                 <p class="text-center">Don't have an account? <a href="{% url 'signup' %}">Register here</a></p>

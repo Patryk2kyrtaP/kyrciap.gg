@@ -166,6 +166,7 @@ def champ_dictionary(champion_id):
         26: "Zilean",
         142: "Zoe",
         143: "Zyra",
+        901: 'Smolder',
     }
     
     
@@ -247,7 +248,7 @@ def champ_dictionary_by_name(champion_name):
         'Kogmaw':'96',
         'KSante':'897',
         'Leblanc':'7',
-        'Leesin':'64',
+        'LeeSin':'64',
         'Leona':'89',
         'Lillia':'876',
         'Lissandra':'127',
@@ -257,9 +258,9 @@ def champ_dictionary_by_name(champion_name):
         'Malphite':'54',
         'Malzahar':'90',
         'Maokai':'57',
-        'Masteryi':'11',
+        'MasterYi':'11',
         'Milio':'902',
-        'Missfortune':'21',
+        'MissFortune':'21',
         'Wukong':'62',
         'Mordekaiser':'82',
         'Morgana':'25',
@@ -307,7 +308,7 @@ def champ_dictionary_by_name(champion_name):
         'Swain':'50',
         'Sylas':'517',
         'Syndra':'134',
-        'Tahmkench':'223',
+        'TahmKench':'223',
         'Taliyah':'163',
         'Talon':'91',
         'Taric':'44',
@@ -345,6 +346,7 @@ def champ_dictionary_by_name(champion_name):
         'Zilean':'26',
         'Zoe':'142',
         'Zyra':'143',
+        'Smolder':'901',
         }
     
     champion_name = champ_dict.get(champion_name, "Not a champion")
@@ -524,6 +526,7 @@ def champ_dictionary_by_name2():
         'Zilean':'26',
         'Zoe':'142',
         'Zyra':'143',
+        'Smolder':'901',
         }
     
     # champion_name = champ_dict.get(champion_name, "Not a champion")
