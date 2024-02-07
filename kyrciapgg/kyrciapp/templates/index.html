@@ -70,6 +70,12 @@
         
         }
 
+        .game-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 100px;
+        }
     </style>
 
 
@@ -129,6 +135,12 @@
     <div class="d-flex justify-content-center align-items-center" style="min-height: 90vh;">
         <form method="post" class="w-50">
             {% csrf_token %}
+
+            <div class="game-container">
+                <img src="{% static 'images/logo1.png' %}" alt="logo" class="img-fluid">
+
+            </div>
+
             <div class="mb-3">
                 <input type="text" class="form-control mb-2" id="summoner_name" name="summoner_name" placeholder="Enter summoner name">
             </div>
