@@ -28,7 +28,8 @@ SECRET_KEY = "django-insecure-u(6r7^ryzuel%14vo(dp8vu7w$p@wei)(!vmeek2$!#-r&jj70
 DEBUG = True
 
 
-ALLOWED_HOSTS = ['twojadomena.com', 'www.twojadomena.com', '127.0.0.1', 'localhost:80']
+ALLOWED_HOSTS = ['*'] 
+# ['127.0.0.1', 'localhost:80']
 
 # Application definition
 
@@ -130,6 +131,7 @@ STATIC_URL = "static/"
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'kyrciapp', 'static'),
 ]
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
