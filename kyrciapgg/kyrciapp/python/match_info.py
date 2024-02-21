@@ -4,10 +4,8 @@ from icecream import ic
 from collections import Counter
 from statistics import mean
 from kyrciapp.python.champion_dictionary import champ_dictionary_by_name
-
 from kyrciapp.python.config import get_api_key, setup_cassiopeia
 from kyrciapp.python.item_dictionary import item_dictionary
-# from player_profile_info import get_game_name_by_puuid
 from kyrciapp.python.region_dictionary import global_region_dictionary, region_dictionary
 from kyrciapp.python.summoner_spell_dictionary import summoner_spells_dictionary
 from cassiopeia import Rune
@@ -16,12 +14,10 @@ from kyrciapp.python.queue_dictionary import queue_dictionary
 
 
 def get_match_id(puuid, global_region, count):
-    # api_key = "RGAPI-cfa506a0-6ec1-4b84-9db0-d099dcf32566"
     api_key = get_api_key()
     global_region2 = global_region_dictionary(global_region)
     api_url_match_v5_by_puuid = f'https://{global_region2}.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?start=0&count={count}'
     api_url = api_url_match_v5_by_puuid + '&api_key=' + api_key
-
     try:
         resp = requests.get(api_url)
         print("Status Code:", resp.status_code)
@@ -29,12 +25,11 @@ def get_match_id(puuid, global_region, count):
             match_id = resp.json()
             # print(match_id)
             return match_id
-        
         else:
             print("Error in the API request")
     except Exception as e:
         print("Error occurred:", e)
-
+        
 def get_general_match_info_by_id(match_id, global_region):
     # api_key = "RGAPI-cfa506a0-6ec1-4b84-9db0-d099dcf32566"
     api_key = get_api_key()
@@ -48,12 +43,9 @@ def get_general_match_info_by_id(match_id, global_region):
         if resp.status_code == 200:
             match_info = resp.json()
             #match_info.keys()
-            
             game_duration = match_info['info']['gameDuration']
-            game_duration = minutes, seconds_remainder = divmod(game_duration, 60) #Converts seconds to minutes
-            
+            game_duration = minutes, seconds_remainder = divmod(game_duration, 60)
             game_mode = match_info['info']['gameMode']
-            # game_name = match_info['info']['gameName']
             game_type = match_info['info']['gameType']
             game_version = match_info['info']['gameVersion']
             platform_Id = match_info['info']['platformId']
@@ -63,15 +55,12 @@ def get_general_match_info_by_id(match_id, global_region):
             queue_name = queue_dictionary(queue_id)
             # ic(queue_name)
         
-            # Obliczenie daty kiedy rozegrano grę,
-            # obliczenie ile dni minęło od tego czasu
             game_creation_seconds = game_creation / 1000.0
             formatted_game_creation = datetime.datetime.fromtimestamp(game_creation_seconds)
             today = datetime.datetime.now()
             when_form_today = today - formatted_game_creation
             when_form_today = when_form_today.days
             
-            # queue_id =  match_info['info']['queueId']
             general_match_info = [game_duration,
                                   game_mode,
                                   game_type,
@@ -111,19 +100,18 @@ def get_match_info_by_id(match_id, global_region):
             game_duration = match_info['info']['gameDuration']
             region_from_dict = region_dictionary(match_info['info']['platformId'])
             # print(f'GameDuration: {game_duration}')           
-            
             players_in_match = match_info['info']['participants'][:10]
             for player in players_in_match:
                 
-                summoner_name = player['summonerName']  #Y
-                champion_name = player['championName']  #Y
-                champ_level = player['champLevel']      #Y
-                kills = player['kills']                 #Y
-                deaths = player['deaths']               #Y
-                assists = player['assists']             #Y
+                summoner_name = player['summonerName']  
+                champion_name = player['championName'] 
+                champ_level = player['champLevel']      
+                kills = player['kills']                
+                deaths = player['deaths']               
+                assists = player['assists']             
                     
                 if deaths != 0:
-                    kda_ratio = round((kills + assists) / deaths, 2)  #Y
+                    kda_ratio = round((kills + assists) / deaths, 2)  
                 else:
                     if deaths == 0:
                         kda_ratio = round((kills + assists), 2)
@@ -133,11 +121,7 @@ def get_match_info_by_id(match_id, global_region):
                 vision_score = player['visionScore']
                 gold_earned = player['goldEarned']
                 first_Blood_Kill = player['firstBloodKill']
-                # items_in_match = [item_dictionary(player['item0']), item_dictionary(player['item1']), #Y
-                #                   item_dictionary(player['item2']), item_dictionary(player['item3']),
-                #                   item_dictionary(player['item4']), item_dictionary(player['item5']),
-                #                   item_dictionary(player['item6'])]
-                
+
                 items_in_match = [(player['item0']), (player['item1']), #Y
                                   (player['item2']), (player['item3']),
                                   (player['item4']), (player['item5']),
@@ -163,33 +147,22 @@ def get_match_info_by_id(match_id, global_region):
                                total_damage_dealt, gold_earned, first_Blood_Kill, items_in_match]
                 
                 
-                runes_info = player['perks']['styles']
-                
-                # Nie zmienia id runy na nazwę ścieżki ;c
-                # main_path = runes_info[0]['style']  # Główna ścieżka
-                # sub_path = runes_info[1]['style']  # Dodatkowa ścieżka
-
-                # aaa = Rune(region=region_from_dict, id=main_path)
-                # bbb = aaa.path.name
- 
+                runes_info = player['perks']['styles']               
                 
                 rune_names = []
                 for rune_category in runes_info:
                     for rune_selection in rune_category['selections']:
-                        rune = Rune(region=region_from_dict, id=rune_selection['perk'])  # Dodaj region do konstruktora Rune
+                        rune = Rune(region=region_from_dict, id=rune_selection['perk'])
                         # rune_path = Rune(region=region_from_dict, id = rune_selection['perk'])
                         # rune_path = rune_path.path.name
                         # ic(rune_path)
                         rune_names.append(rune.name)
 
-                # Dodaj listę nazw run do informacji gracza
                 player_info.append(rune_names)
                 all_players_info.append(player_info)
-                
                 # ic(players_in_match)
-                # ic(all_players_info)                              
-                
-            return all_players_info  # Zwracamy listę z informacjami o wszystkich graczach
+                # ic(all_players_info)                             
+            return all_players_info 
             
         
         else:
@@ -219,7 +192,6 @@ def player_to_loop(puuid, match_data):
         if 'metadata' in match_data and 'participants' in match_data['metadata']:
             part_index = match_data['metadata']['participants'].index(puuid)
         
-        # part_index = match_data['metadata']['participants'].index(puuid)
             games = 1
             win = match_data['info']['participants'][part_index]['win']
             if win == True:
@@ -259,18 +231,12 @@ def player_to_loop(puuid, match_data):
 def process_looped_info(looped_info):
     total_wins = sum(item[0] for item in looped_info)
     
-    # Obliczenie średniej KDA
     average_kda = mean([item[1] for item in looped_info])
     average_kda = round(average_kda, 2)
-    # Znalezienie najczęściej występującego bohatera
     champions = [item[2] for item in looped_info]
-    most_frequent_champion = Counter(champions).most_common(3)#[0][0]
-
-    # Sumowanie pierwszych zabójstw
+    most_frequent_champion = Counter(champions).most_common(3)
     fb_participations = (sum(item[3] for item in looped_info))
-    
     games = (sum(item[4] for item in looped_info))
-    
     wr =  round((total_wins / games) * 100, 2)
 
     return total_wins, average_kda, most_frequent_champion, fb_participations, games, wr

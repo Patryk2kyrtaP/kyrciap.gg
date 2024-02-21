@@ -14,10 +14,9 @@ class Note(models.Model):
 
 class CustomUser(AbstractUser):
     region = models.CharField(max_length=100)
-
     class Meta:
         db_table = 'custom_user'
-        
+    
     followed_users = models.ManyToManyField('self', symmetrical=False, related_name='followers', blank=True)
 
     def follow_user(self, user_to_follow):
@@ -25,9 +24,10 @@ class CustomUser(AbstractUser):
 
     def unfollow_user(self, user_to_unfollow):
         self.followed_users.remove(user_to_unfollow)
-
+        
     def is_following(self, user):
         return self.followed_users.filter(id=user.id).exists()
+    
     
 class FollowedSummoner(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)

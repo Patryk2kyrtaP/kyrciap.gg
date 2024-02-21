@@ -1,8 +1,4 @@
-<!-- <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Sign up</button>
-</form> -->
+{% load static %}
 
 <!DOCTYPE html>
 <html>
@@ -11,23 +7,46 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
     <title>Login</title>
+    <!-- <link rel="stylesheet" href="{% static 'kyrciapp/static/css/styles.css' %}"> -->
+<style>
+            body.light-theme {
+    background-color: #f0f0f0; 
+    color: #333; 
+    }
+
+    body.light-theme .custom-card {
+    background: #ffffff; 
+    color: #000000; 
+    }
+    
+    .theme-toggle-btn {
+    border: 2px solid #ffffff66;
+    border-radius: 5px;
+    background-color: rgba(66, 63, 71, 0.9);
+    cursor: pointer;
+    margin-top: 15px;
+    display: inline-flex; 
+    justify-content: center;
+    align-items: center;
+    margin-left: 40%;
+}
+    .theme-toggle-btn i {
+    font-size: 24px; 
+}
+</style>
 </head>
 <body class="bg-dark text-white d-flex justify-content-center align-items-center" style="min-height: 100vh;">
 
     <div class="w-25 p-4 rounded" style="background-color: rgb(40, 38, 43);">
         <form method="post">
             {% csrf_token %}
-    
-            <!-- Add a title and description -->
-
             <div>
                 <p class="text-center" style="font-weight: bold; font-size: xx-large;">
                     Register
                 </p>
                 <p class="text-center">Join Kyrciap.gg!</p>
             </div>
-    
-            <!-- Add fields for email, username, password, and confirm password -->
+
             <br> <!-- Empty line 3 -->
             <br> <!-- Empty line 4 -->
     
@@ -86,16 +105,12 @@
                     <div class="invalid-feedback">{{ error }}</div>
                 {% endfor %}
             </div>
-    
-            <!-- Add a button for registration -->
             <div class="d-flex align-items-center justify-content-between">
                 <button type="submit" class="btn btn-primary">Sign up</button>
                 <a href="{% url 'index' %}" class="btn btn-secondary">
                     <i class="fas fa-home"></i>
                 </a>
             </div>
-    
-            <!-- Add empty lines and registration link -->
             <br> <!-- Empty line 1 -->
             <br> <!-- Empty line 2 -->
 
@@ -106,9 +121,48 @@
         </form>
     </div>
     
-        </form>
-    </div>
+</form>
+</div>
     
+    <!-- <script src="{% static 'kyrciapp/JavaScript/scripts.js' %}"></script> -->
+
+    <script>
+        function setTheme(theme) {
+localStorage.setItem('theme', theme);
+}
+
+function applySavedTheme() {
+const theme = localStorage.getItem('theme');
+const themeToggleBtn = document.getElementById('theme-toggle');
+
+if (theme === 'light') {
+document.body.classList.remove('bg-dark');
+document.body.classList.add('light-theme');
+
+if (themeToggleBtn) themeToggleBtn.innerHTML = '<i class="bi bi-moon"></i>';
+} else {
+
+document.body.classList.add('bg-dark');
+document.body.classList.remove('light-theme');
+
+if (themeToggleBtn) themeToggleBtn.innerHTML = '<i class="bi bi-brightness-alt-high"></i>';
+}
+}
+
+document.addEventListener("DOMContentLoaded", applySavedTheme);
+
+document.getElementById('theme-toggle').addEventListener('click', function() {
+const isLightTheme = document.body.classList.contains('light-theme');
+
+if (isLightTheme) {
+    setTheme('dark'); 
+} else {
+    setTheme('light'); 
+}
+
+applySavedTheme(); 
+});
+    </script>
 
 </body>
 </html>

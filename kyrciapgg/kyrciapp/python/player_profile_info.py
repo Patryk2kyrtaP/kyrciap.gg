@@ -14,8 +14,6 @@ def get_summoner_info(summoner_name, global_region):
     api_url = f"https://{global_region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/{summoner_name}"
     api_url = api_url + '?api_key=' + api_key
     
-    # setup_cassiopeia()
-    
     try:
         resp = requests.get(api_url)
         if resp.status_code == 200:
@@ -26,10 +24,6 @@ def get_summoner_info(summoner_name, global_region):
             name = player_info['name']
             id = player_info['id']
             puuid1 = player_info['puuid']
-        #     summoner = cass.Summoner(account_id=id, region = 'EUN1')
-        # # Uzyskaj region gracza
-        #     region = summoner.region
-        #     ic(region)
             summoner_Level = player_info['summonerLevel']
 
             player_info_list = [account_Id, 
@@ -41,9 +35,7 @@ def get_summoner_info(summoner_name, global_region):
                                 summoner_Level]     
             # ic(player_info_list)
             return player_info_list
-        
-        
-            
+    
         else:
             print("Error in the API request")
             return None
@@ -70,15 +62,12 @@ def get_rank_info(encrypted_summoner_id, global_region):
                         solo_q_info = extract_rank_info(info)
                     elif queue_type == 'RANKED_FLEX_SR':
                         flex_info = extract_rank_info(info)
-
                 # ic(solo_q_info)
-                # ic(flex_info)
-                
+                # ic(flex_info)                
                 return solo_q_info, flex_info
-                
             else:
                 print('No ranked games played.')
-                return None, None  # Zwróć krotkę dwóch wartości None
+                return None, None 
         else:
             print("Error in the API request")
             return None, None
@@ -131,7 +120,7 @@ def get_maestry_points(puuid, global_region):
             for champion in maestry_info:
                 chestGranted = champion['chestGranted']
                 champion_id = champion['championId']
-                champion_name = champion_id  # Przekazanie identyfikatora mistrza jako liczby całkowitej
+                champion_name = champion_id 
                 last_play_time = champion['lastPlayTime']
                 last_play_date = datetime.fromtimestamp(last_play_time / 1000.0).strftime('%d/%m/%Y')
                 champion_level = champion['championLevel']

@@ -483,6 +483,7 @@ def champ_dictionary_by_name2():
         'Sion':'14',
         'Sivir':'15',
         'Skarner':'72',
+        'Smolder':'901',
         'Sona':'37',
         'Soraka':'16',
         'Swain':'50',
@@ -526,7 +527,7 @@ def champ_dictionary_by_name2():
         'Zilean':'26',
         'Zoe':'142',
         'Zyra':'143',
-        'Smolder':'901',
+        
         }
     
     # champion_name = champ_dict.get(champion_name, "Not a champion")
