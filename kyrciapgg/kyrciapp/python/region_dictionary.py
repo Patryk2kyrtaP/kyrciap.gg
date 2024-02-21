@@ -90,6 +90,10 @@ def choose_region():
         'VN2': 'Vietnam',
     }
     return list(region_dict.items())
+
+
+
+
     # for i, region in enumerate(regions):
     #     translated_region = region_dict.get(region, "Unknown Region")
     #     print(f"{i + 1}. {translated_region} ({region})")

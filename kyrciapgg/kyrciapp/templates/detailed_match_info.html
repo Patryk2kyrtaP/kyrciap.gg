@@ -8,7 +8,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
     <title>Informacje o Graczu</title>
-    <!-- <link rel="stylesheet" href="{% static 'kyrciapp/static/css/styles.css' %}"> -->
+    <link rel="stylesheet" href="{% static 'kyrciapp/css/styles.css' %}">
     <style>
         .btn-custom {
            height: 42px; 
@@ -61,23 +61,7 @@
        gap: 10px;
    }
    
-   .game-result p {
-       margin: 0;
-       font-size: 16px;
-       font-weight: bold;
-       display: flex;
-       flex-direction: column;
-       align-items: center;
-   
-       padding-bottom: 30px;
-       padding-right: 35px;
-       padding-top: 30px;
-       
-   }
-   
-   .game-result p:nth-child(2) {
-       color: green;
-   }
+
    
    
    .champion-icon {
@@ -166,37 +150,15 @@
    }
    
    
-       #navMenu {
-           display: none;
-           width: 16%;
-           height: 100vh;
-           background-color: rgba(40, 38, 43, 0.9); 
-           color: white;
-           position: fixed;
-           top: 0px;
-           left: 0; 
-           z-index: 1000;
-           padding: 20px; 
-           border-radius: .40rem;
-           border-color: rgba(0, 0, 0, 0.9);
-           display: flex;
-           justify-content: center; 
-           }   
+
    
-       .move-button {
-           display: flex;
-           flex-direction: column;
-           justify-content: center;
-           
-           }
+
    
        .margin-style{
            margin-top: 20px;
        }
        
-       .no-wrap {
-           white-space: nowrap; 
-       }
+
    
    .win-background {
        background-color: rgba(0, 128, 0, 0.15);
@@ -207,32 +169,10 @@
        background-color: rgba(255, 0, 0, 0.15); 
        border-radius: 10px;
    }
-   body.light-theme {
-    background-color: #f0f0f0;
-    color: #333; 
-    }
 
-    body.light-theme .custom-card {
-    background: #ffffff; 
-    color: #000000; 
-    }
     
 
 
-    .theme-toggle-btn {
-    border: 2px solid #ffffff66;
-    border-radius: 5px;
-    background-color: rgba(66, 63, 71, 0.9);
-    cursor: pointer;
-    margin-top: 15px;
-    display: inline-flex; 
-    justify-content: center;
-    align-items: center;
-    margin-left: 40%;
-}
-    .theme-toggle-btn i {
-    font-size: 24px; 
-}
    </style>
 </head>
 
@@ -335,8 +275,8 @@
                     
                 </div>
                 <div class="col summoner-spells ">
-                    <img src="{% static 'images/' %}{{ player.summoner1Id }}.png" class="img-fluid">
-                    <img src="{% static 'images/' %}{{ player.summoner2Id }}.png" class="img-fluid">
+                    <img src="{% static 'kyrciapp/images/' %}{{ player.summoner1Id }}.png" class="img-fluid">
+                    <img src="{% static 'kyrciapp/images/' %}{{ player.summoner2Id }}.png" class="img-fluid">
                 </div>               
 
                 
@@ -383,7 +323,10 @@
         
         
         </div>
-        <script src="{% static 'kyrciapp/JavaScript/scripts.js' %}"></script>
-        
+        <script src="{% static 'kyrciapp/JavaScript/theme.js' %}"></script>
+        <script src="{% static 'kyrciapp/JavaScript/openMenu.js' %}"></script>
+        <script src="{% static 'kyrciapp/JavaScript/closeMenu.js' %}"></script>
+    
+        </script>
         </body>
         </html>

@@ -69,6 +69,7 @@ color: rgb(0, 0, 0) !important;
     color:rgb(255, 255, 255);
     margin-bottom: 15px;
 }
+
 body.light-theme {
 background-color: #f0f0f0; 
 color: #333; 
@@ -92,4 +93,25 @@ margin-left: 40%;
 }
 .theme-toggle-btn i {
 font-size: 24px; 
+}
+.no-wrap {
+    white-space: nowrap; 
+}
+
+.game-result p {
+    margin: 0;
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding-bottom: 30px;
+    padding-right: 35px;
+    padding-top: 30px;
+    
+}
+
+.game-result p:nth-child(2) {
+    color: green;
 }
