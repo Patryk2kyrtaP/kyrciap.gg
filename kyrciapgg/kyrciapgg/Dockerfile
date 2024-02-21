@@ -1,6 +1,6 @@
 FROM python:3.12.1
 
-WORKDIR /kyrciapgg
+WORKDIR /kyrciapp
 
 COPY requirements.txt ./
 
