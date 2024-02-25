@@ -1,7 +1,3 @@
 {
-    "EMAIL_PASSWORD": "izzd nxpe menv ppgj",
-    "DEBUG": true,
-    "RIOT_API_KEY": "RGAPI-464a80b1-1861-41ff-a7b5-ead15641d6c7",
-    "ALLOWED_HOSTS": ["localhost", "127.0.0.1"],
-    "SECRET_KEY": "django-insecure-u(6r7^ryzuel%14vo(dp8vu7w$p@wei)(!vmeek2$!#-r&jj70"
+
 }
