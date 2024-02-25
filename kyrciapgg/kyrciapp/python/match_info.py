@@ -182,7 +182,7 @@ def loop_through_matches(match_id, global_region):
         return data
         
 def player_to_loop(puuid, match_data):
-
+        list = []
         wins = 0
         fb_kill = 0
         fb_assist = 0
@@ -229,7 +229,13 @@ def player_to_loop(puuid, match_data):
         return list
 
 def process_looped_info(looped_info):
-    total_wins = sum(item[0] for item in looped_info)
+    try:
+        total_wins = sum(item[0] for item in looped_info)
+        ic(total_wins)
+    except IndexError as e:
+        print(f"Error processing looped_info: {e}")
+        total_wins = 0  # lub inną wartość domyślną
+    
     
     average_kda = mean([item[1] for item in looped_info])
     average_kda = round(average_kda, 2)

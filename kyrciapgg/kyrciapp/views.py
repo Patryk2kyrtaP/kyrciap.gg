@@ -229,7 +229,7 @@ def rank_info_render(request):
 def render_match_id(request):
     puuid = request.session['puuid']
     global_region = request.session['global_region']  
-    match_ids = get_match_id(puuid, global_region, 2)                                           # LICZBA GIER 
+    match_ids = get_match_id(puuid, global_region, 5)                                           # LICZBA GIER 
     request.session['match_ids'] = match_ids 
 
     if not match_ids:

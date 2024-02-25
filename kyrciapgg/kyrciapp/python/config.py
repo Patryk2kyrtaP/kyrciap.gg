@@ -1,5 +1,10 @@
+import os
+
+
 def get_api_key():
-    return "RGAPI-85014bec-a87c-4329-9292-4f44171bc9a4"
+    return "RGAPI-464a80b1-1861-41ff-a7b5-ead15641d6c7"
+    #return os.getenv('RIOT_API_KEY')
+
 
 import cassiopeia as cass
 def setup_cassiopeia():

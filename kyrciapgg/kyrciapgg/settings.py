@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+import json
 import os
 from pathlib import Path
 
@@ -22,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-u(6r7^ryzuel%14vo(dp8vu7w$p@wei)(!vmeek2$!#-r&jj70"
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -162,11 +163,14 @@ AUTH_USER_MODEL = 'kyrciapp.CustomUser'
 #     },
 # }
 
+config_path = os.path.join(os.path.dirname(__file__), 'config.json')
 
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_USE_TLS = True
-# EMAIL_PORT = 465
-# EMAIL_HOST_USER = 'kyrciap.gg@gmail.com'
-# EMAIL_HOST_PASSWORD = 'izzd nxpe menv ppgj' 
-# EMAIL_USE_LOCALTIME = False
+with open(config_path) as config_file:
+    config = json.load(config_file)
+
+DEBUG = config.get('DEBUG')
+
+EMAIL_PASSWORD = config.get("izzd nxpe menv ppgj")
+RIOT_API_KEY = config.get("RIOT_API_KEY")
+ALLOWED_HOSTS = config.get("ALLOWED_HOSTS")
+SECRET_KEY = config.get("SECRET_KEY")
